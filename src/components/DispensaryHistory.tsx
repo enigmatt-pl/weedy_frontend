@@ -8,6 +8,7 @@ import {
   Save, Send, Package, Calendar, Loader2, Trash2, X, Search, 
   User, Scissors, Upload, Move, MapPin, Info, Store, FileText, Navigation
 } from 'lucide-react';
+import { LocationPicker } from './LocationPicker';
 import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -154,6 +155,7 @@ export const DispensaryHistory = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<HistoryFormData>({
@@ -385,25 +387,16 @@ export const DispensaryHistory = () => {
                         className="bg-white text-sm"
                         rows={2}
                       />
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Szerokość (Lat)</label>
-                          <input
-                            {...register('latitude')}
-                            type="text"
-                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            placeholder="np. 52.237"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Długość (Lng)</label>
-                          <input
-                            {...register('longitude')}
-                            type="text"
-                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            placeholder="np. 21.017"
-                          />
-                        </div>
+                      <div className="mt-4">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Lokalizacja na mapie</label>
+                        <LocationPicker 
+                          lat={watch('latitude')} 
+                          lng={watch('longitude')} 
+                          onChange={(lat, lng) => {
+                            setValue('latitude', lat);
+                            setValue('longitude', lng);
+                          }}
+                        />
                       </div>
                     </div>
                   </div>

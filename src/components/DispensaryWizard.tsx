@@ -10,6 +10,7 @@ import { DispensariesApi } from '../lib/api';
 import { useToastStore } from '../store/toastStore';
 import { useNavigate } from 'react-router-dom';
 import { Store, MapPin, FileText, CheckCircle2, Loader2, ArrowRight, Navigation, Clock } from 'lucide-react';
+import { LocationPicker } from './LocationPicker';
 
 const dispensarySchema = z.object({
   title: z.string().min(3, 'Nazwa punktu musi mieć co najmniej 3 znaki'),
@@ -38,6 +39,7 @@ export const DispensaryWizard = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<DispensaryFormData>({
     resolver: zodResolver(dispensarySchema),
@@ -194,16 +196,15 @@ export const DispensaryWizard = () => {
                   </section>
                 </div>
 
-                {/* Right Side: Logistics & Presence */}
                 <div className="lg:col-span-5 space-y-10">
-                  <section className="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100/50">
+                  <section className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                     <div className="flex items-center gap-3 mb-8">
                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
                         <MapPin className="w-5 h-5" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-brand-dark uppercase tracking-widest leading-none">Lokalizacja</h3>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gdzie Cię znaleźć?</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Zaznacz na mapie</p>
                       </div>
                     </div>
 
@@ -225,22 +226,17 @@ export const DispensaryWizard = () => {
                             placeholder="ul. Zielona 4/2..."
                           />
                         </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Lat</label>
-                          <input
-                            {...register('latitude')}
-                            className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
-                            placeholder="52.2..."
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Lng</label>
-                          <input
-                            {...register('longitude')}
-                            className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
-                            placeholder="21.0..."
-                          />
-                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <LocationPicker 
+                          lat={watch('latitude')} 
+                          lng={watch('longitude')} 
+                          onChange={(lat, lng) => {
+                            setValue('latitude', lat);
+                            setValue('longitude', lng);
+                          }}
+                        />
                       </div>
                     </div>
                   </section>
