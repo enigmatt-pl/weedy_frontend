@@ -39,6 +39,13 @@ const historySchema = z.object({
   title: z.string().min(1, 'Nazwa jest wymagana'),
   description: z.string().min(1, 'Opis jest wymagany'),
   query_data: z.string().min(1, 'Lokalizacja jest wymagana'),
+  city: z.string().optional(),
+  categories: z.array(z.string()).optional(),
+  latitude: z.string().optional().transform(v => v ? parseFloat(v) : undefined),
+  longitude: z.string().optional().transform(v => v ? parseFloat(v) : undefined),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  website: z.string().optional(),
 });
 
 const MAX_IMAGES = 16;
@@ -146,6 +153,7 @@ export const DispensaryHistory = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
     reset,
   } = useForm<HistoryFormData>({
@@ -158,6 +166,13 @@ export const DispensaryHistory = () => {
         title: selectedDispensary.title || '',
         description: selectedDispensary.description || '',
         query_data: selectedDispensary.location || selectedDispensary.query_data || '',
+        city: selectedDispensary.city || '',
+        categories: selectedDispensary.categories || [],
+        latitude: selectedDispensary.latitude?.toString() || '',
+        longitude: selectedDispensary.longitude?.toString() || '',
+        phone: selectedDispensary.phone || '',
+        email: selectedDispensary.email || '',
+        website: selectedDispensary.website || '',
       });
       setLocalImages(selectedDispensary.image_urls || selectedDispensary.images || []);
     }
@@ -202,6 +217,21 @@ export const DispensaryHistory = () => {
       formData.append('dispensary[title]', payloadData.title);
       formData.append('dispensary[description]', payloadData.description);
       formData.append('dispensary[query_data]', payloadData.query_data);
+      if (payloadData.city) formData.append('dispensary[city]', payloadData.city);
+      if (payloadData.categories) {
+        payloadData.categories.forEach(cat => {
+          formData.append('dispensary[categories][]', cat);
+        });
+      }
+      if (payloadData.phone) formData.append('dispensary[phone]', payloadData.phone);
+      if (payloadData.email) formData.append('dispensary[email]', payloadData.email);
+      if (payloadData.website) formData.append('dispensary[website]', payloadData.website);
+      if (payloadData.latitude !== undefined) {
+        formData.append('dispensary[latitude]', payloadData.latitude.toString());
+      }
+      if (payloadData.longitude !== undefined) {
+        formData.append('dispensary[longitude]', payloadData.longitude.toString());
+      }
 
       await Promise.all(
         localImages.map(async (img, i) => {
@@ -292,13 +322,89 @@ export const DispensaryHistory = () => {
                         error={errors.title?.message}
                         className="bg-white font-bold"
                       />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Miasto</label>
+                          <input
+                            {...register('city')}
+                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-4">Kategorie (wybierz wiele)</label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {['cbd', 'hemp', 'medical', 'accessories'].map((cat) => (
+                              <label
+                                key={cat}
+                                className={`flex items-center justify-center px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all ${
+                                  (watch('categories') || []).includes(cat)
+                                    ? 'bg-primary/10 border-primary text-primary'
+                                    : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="hidden"
+                                  value={cat}
+                                  {...register('categories')}
+                                />
+                                <span className="text-xs font-black uppercase tracking-widest">
+                                  {cat === 'cbd' ? 'CBD' : cat === 'hemp' ? 'Konopie' : cat === 'medical' ? 'Medyczna' : 'Akcesoria'}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Kontakt</label>
+                        <div className="grid grid-cols-2 gap-4">
+                           <input
+                            {...register('phone')}
+                            placeholder="Telefon"
+                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          />
+                           <input
+                            {...register('email')}
+                            placeholder="Email"
+                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                          />
+                        </div>
+                        <input
+                          {...register('website')}
+                          placeholder="Strona WWW"
+                          className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                        />
+                      </div>
+
                       <Textarea
-                        label="Lokalizacja"
+                        label="Lokalizacja (Adres)"
                         {...register('query_data')}
                         error={errors.query_data?.message}
                         className="bg-white text-sm"
                         rows={2}
                       />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Szerokość (Lat)</label>
+                          <input
+                            {...register('latitude')}
+                            type="text"
+                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            placeholder="np. 52.237"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Długość (Lng)</label>
+                          <input
+                            {...register('longitude')}
+                            type="text"
+                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            placeholder="np. 21.017"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 

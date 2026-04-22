@@ -29,6 +29,13 @@ export interface Dispensary {
   location?: string;
   latitude?: number;
   longitude?: number;
+  phone?: string;
+  hours?: string;
+  rating?: number;
+  categories?: string[];
+  city?: string;
+  website?: string;
+  email?: string;
 }
 
 export const AuthApi = {

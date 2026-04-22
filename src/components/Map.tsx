@@ -48,11 +48,7 @@ const FitBounds = ({ dispensaries }: { dispensaries: Dispensary[] }) => {
     if (dispensaries.length === 0) return;
     
     const bounds = L.latLngBounds(
-      dispensaries.map(d => {
-        const lat = d.latitude || 52.237 + (d.id % 100) * 0.01;
-        const lng = d.longitude || 21.017 + (d.id % 50) * 0.01;
-        return [lat, lng] as [number, number];
-      })
+      dispensaries.map(d => [d.latitude as number, d.longitude as number])
     );
     
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
@@ -64,11 +60,16 @@ const FitBounds = ({ dispensaries }: { dispensaries: Dispensary[] }) => {
 export const Map = ({ dispensaries, onSelect, selectedId }: MapProps) => {
   // Mock coordinates for demo if not provided
   const processedDispensaries = useMemo(() => {
-    return dispensaries.map(d => ({
-      ...d,
-      latitude: d.latitude || 52.237 + (Math.sin(d.id) * 2), // Spread around Poland
-      longitude: d.longitude || 21.017 + (Math.cos(d.id) * 4),
-    }));
+    return dispensaries
+      .map(d => {
+        const id = Number(d.id) || 0;
+        const rawLat = parseFloat(String(d.latitude));
+        const rawLng = parseFloat(String(d.longitude));
+        const lat = !isNaN(rawLat) ? rawLat : (52.237 + (Math.sin(id) * 2));
+        const lng = !isNaN(rawLng) ? rawLng : (21.017 + (Math.cos(id) * 4));
+        return { ...d, latitude: lat, longitude: lng };
+      })
+      .filter(d => !isNaN(d.latitude) && !isNaN(d.longitude));
   }, [dispensaries]);
 
   const center: [number, number] = [52.237, 21.017]; // Warsaw default
@@ -114,12 +115,14 @@ export const Map = ({ dispensaries, onSelect, selectedId }: MapProps) => {
                 <div className="flex flex-col gap-1.5 pt-2 border-t border-slate-50">
                   <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
                     <Navigation className="w-3 h-3" />
-                    <span>Lokalizacja gotowa</span>
+                    <span>{dispensary.query_data ? 'Lokalizacja zweryfikowana' : 'Brak dokładnego adresu'}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
-                    <Phone className="w-3 h-3" />
-                    <span>+48 123 456 789</span>
-                  </div>
+                  {dispensary.phone && (
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
+                      <Phone className="w-3 h-3" />
+                      <span>{dispensary.phone}</span>
+                    </div>
+                  )}
                 </div>
 
                 <button 

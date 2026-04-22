@@ -48,8 +48,8 @@ export const SearchPage = () => {
       setLoading(true);
       try {
         const data = await DispensariesApi.getAll(page, 12);
-        const published = data.dispensaries.filter(d => d.status === 'published' || d.status === 'draft');
-        setDispensaries(published);
+        const visible = data.dispensaries.filter(d => ['published', 'active', 'draft'].includes(d.status));
+        setDispensaries(visible);
         setTotalPages(data.meta.total_pages);
         setTotalCount(data.meta.total_count);
       } catch {
@@ -62,10 +62,11 @@ export const SearchPage = () => {
   }, [page]);
 
   const filtered = dispensaries.filter(d => {
-    const haystack = `${d.title} ${d.description} ${d.query_data}`.toLowerCase();
+    const haystack = `${d.title} ${d.description} ${d.query_data} ${d.city} ${d.category}`.toLowerCase();
     const qMatch = !query || haystack.includes(query.toLowerCase());
-    const cityMatch = !selectedCity || haystack.includes(selectedCity.toLowerCase());
-    return qMatch && cityMatch;
+    const cityMatch = !selectedCity || d.city?.toLowerCase() === selectedCity.toLowerCase() || d.query_data?.toLowerCase().includes(selectedCity.toLowerCase());
+    const categoryMatch = selectedCategory === 'all' || d.categories?.some(cat => cat.toLowerCase() === selectedCategory.toLowerCase());
+    return qMatch && cityMatch && categoryMatch;
   });
 
   return (
@@ -252,7 +253,7 @@ export const SearchPage = () => {
                           </h3>
                           <div className="flex items-center gap-1 shrink-0">
                             <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                            <span className="text-[10px] font-bold text-slate-700">4.{(dispensary.id % 4) + 5}</span>
+                            <span className="text-[10px] font-bold text-slate-700">{dispensary.rating || 'N/A'}</span>
                           </div>
                         </div>
 
@@ -274,7 +275,7 @@ export const SearchPage = () => {
                         <div className={`flex items-center justify-between pt-3 border-t border-slate-50 ${viewMode === 'grid' ? '' : 'hidden'}`}>
                           <div className="flex items-center gap-1.5 text-slate-400">
                             <Clock className="w-3 h-3" />
-                            <span className="text-[10px] font-medium">Pon-Sob 9–21</span>
+                            <span className="text-[10px] font-medium">{dispensary.hours || 'Godziny niepodane'}</span>
                           </div>
                           <div className="flex items-center gap-1 text-[10px] font-bold text-primary">
                             <Package className="w-3 h-3" />
