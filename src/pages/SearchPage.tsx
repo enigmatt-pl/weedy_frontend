@@ -179,7 +179,9 @@ export const SearchPage = () => {
               <X className="w-3 h-3" /> Wyczyść filtry
             </button>
           )}
-         {/* Content Area */}
+        </div>
+
+        {/* Content Area */}
         <div className={`flex flex-col lg:flex-row gap-10 ${viewMode === 'map' ? 'h-[calc(100vh-200px)]' : ''}`}>
           {/* Results Side */}
           <div className={`flex-1 ${viewMode === 'map' ? 'lg:max-w-[500px] xl:max-w-[600px] overflow-y-auto pr-4 custom-scrollbar' : ''}`}>
@@ -218,20 +220,15 @@ export const SearchPage = () => {
                   return (
                     <div
                       key={dispensary.id}
+                      id={`dispensary-${dispensary.id}`}
                       onMouseEnter={() => setHoveredId(dispensary.id)}
                       onMouseLeave={() => setHoveredId(null)}
-                      onClick={() => {
-                        setSelectedId(dispensary.id);
-                        if (viewMode === 'grid') {
-                          // navigate(`/dispensary/${dispensary.id}`); 
-                        }
-                      }}
+                      onClick={() => setSelectedId(dispensary.id)}
                       className={`bg-white rounded-3xl border shadow-lg shadow-slate-200/50 overflow-hidden group cursor-pointer transition-all duration-500
                         ${isSelected ? 'border-primary ring-4 ring-primary/10' : 'border-slate-100'}
                         ${viewMode === 'grid' ? 'hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-1' : 'flex items-center p-4 gap-4 hover:bg-emerald-50/50'}
                       `}
                     >
-                      {/* Image */}
                       <div className={`bg-gradient-to-br from-emerald-50 to-slate-100 overflow-hidden relative shrink-0
                         ${viewMode === 'grid' ? 'aspect-[4/3]' : 'w-24 h-24 rounded-2xl'}
                       `}>
@@ -246,16 +243,8 @@ export const SearchPage = () => {
                             <Leaf className="w-8 h-8 text-emerald-200" />
                           </div>
                         )}
-
-                        {dispensary.status === 'published' && viewMode === 'grid' && (
-                          <div className="absolute top-3 left-3 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                            Live
-                          </div>
-                        )}
                       </div>
 
-                      {/* Body */}
                       <div className={`flex-1 ${viewMode === 'grid' ? 'p-5' : 'py-1'}`}>
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <h3 className={`font-bold text-brand-dark leading-tight group-hover:text-primary transition-colors line-clamp-1 ${viewMode === 'grid' ? 'text-base' : 'text-sm'}`}>
@@ -317,9 +306,6 @@ export const SearchPage = () => {
             </div>
           )}
         </div>
-    })}
-          </div>
-        )}
 
         {/* Pagination */}
         {!loading && totalPages > 1 && (
