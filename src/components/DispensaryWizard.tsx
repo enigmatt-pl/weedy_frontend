@@ -9,7 +9,7 @@ import { ImageUpload } from './ImageUpload';
 import { DispensariesApi } from '../lib/api';
 import { useToastStore } from '../store/toastStore';
 import { useNavigate } from 'react-router-dom';
-import { Store, MapPin, FileText, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
+import { Store, MapPin, FileText, CheckCircle2, Loader2, ArrowRight, Navigation, Clock } from 'lucide-react';
 
 const dispensarySchema = z.object({
   title: z.string().min(3, 'Nazwa punktu musi mieć co najmniej 3 znaki'),
@@ -127,160 +127,153 @@ export const DispensaryWizard = () => {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-12 space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                    <div className="flex items-center gap-3 mb-4 text-primary">
-                      <Store className="w-5 h-5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Podstawowe Dane</span>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="col-span-2">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-4">Kategorie (wybierz wiele)</label>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            {['cbd', 'hemp', 'medical', 'accessories'].map((cat) => (
-                              <label
-                                key={cat}
-                                className={`flex items-center justify-center px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all ${
-                                  (watch('categories') || []).includes(cat)
-                                    ? 'bg-primary/10 border-primary text-primary'
-                                    : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'
-                                }`}
-                              >
-                                <input
-                                  type="checkbox"
-                                  className="hidden"
-                                  value={cat}
-                                  {...register('categories')}
-                                />
-                                <span className="text-xs font-black uppercase tracking-widest">
-                                  {cat === 'cbd' ? 'CBD' : cat === 'hemp' ? 'Konopie' : cat === 'medical' ? 'Medyczna' : 'Akcesoria'}
-                                </span>
-                              </label>
-                            ))}
-                          </div>
-                          {errors.categories && <p className="mt-2 text-[10px] text-red-500 font-bold">{errors.categories.message}</p>}
-                        </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-12 space-y-12">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                {/* Left Side: Identity & Details */}
+                <div className="lg:col-span-7 space-y-10">
+                  <section>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-primary">
+                        <Store className="w-5 h-5" />
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2 sm:col-span-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Nazwa Punktu</label>
-                          <input
-                            {...register('title')}
-                            className={`w-full bg-white border ${errors.title ? 'border-red-500' : 'border-slate-100'} rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all`}
-                            placeholder="np. Green Life"
-                          />
-                          {errors.title && <p className="mt-1 text-[10px] text-red-500 font-bold">{errors.title.message}</p>}
-                        </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Miasto</label>
-                          <input
-                            {...register('city')}
-                            className={`w-full bg-white border ${errors.city ? 'border-red-500' : 'border-slate-100'} rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all`}
-                            placeholder="np. Katowice"
-                          />
-                          {errors.city && <p className="mt-1 text-[10px] text-red-500 font-bold">{errors.city.message}</p>}
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">NIP / ID</label>
-                          <input
-                            {...register('verification_id')}
-                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            placeholder="opcjonalnie"
-                          />
-                        </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-brand-dark uppercase tracking-widest leading-none">Tożsamość Punktu</h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Nazwa i Klasyfikacja</p>
                       </div>
                     </div>
-                  </div>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Nazwa placówki</label>
+                        <input
+                          {...register('title')}
+                          className={`w-full bg-slate-50/50 border ${errors.title ? 'border-red-500' : 'border-slate-100'} rounded-[1.25rem] px-6 py-4 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all`}
+                          placeholder="np. Premium Buds Katowice"
+                        />
+                        {errors.title && <p className="mt-2 text-[10px] text-red-500 font-bold px-1">{errors.title.message}</p>}
+                      </div>
 
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                    <div className="flex items-center gap-3 mb-4 text-primary">
-                      <Navigation className="w-5 h-5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Kontakt</span>
-                    </div>
-                    <div className="space-y-4">
                       <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Telefon</label>
-                        <input
-                          {...register('phone')}
-                          className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                          placeholder="+48..."
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Email</label>
-                          <input
-                            {...register('email')}
-                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            placeholder="kontakt@..."
-                          />
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3 px-1">Kategorie (wybierz wiele)</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          {['cbd', 'hemp', 'medical', 'accessories'].map((cat) => (
+                            <label
+                              key={cat}
+                              className={`flex items-center justify-center px-4 py-4 rounded-[1.25rem] border-2 cursor-pointer transition-all duration-300 ${
+                                (watch('categories') || []).includes(cat)
+                                  ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20'
+                                  : 'bg-slate-50/50 border-transparent text-slate-500 hover:border-slate-200'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                className="hidden"
+                                value={cat}
+                                {...register('categories')}
+                              />
+                              <span className="text-[10px] font-black uppercase tracking-widest">
+                                {cat === 'cbd' ? 'CBD' : cat === 'hemp' ? 'Konopie' : cat === 'medical' ? 'Medyczna' : 'Akcesoria'}
+                              </span>
+                            </label>
+                          ))}
                         </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Strona WWW</label>
-                          <input
-                            {...register('website')}
-                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            placeholder="https://..."
-                          />
-                        </div>
+                        {errors.categories && <p className="mt-2 text-[10px] text-red-500 font-bold px-1">{errors.categories.message}</p>}
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                    <div className="flex items-center gap-3 mb-4 text-primary">
-                      <MapPin className="w-5 h-5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Lokalizacja</span>
-                    </div>
-                    <Textarea
-                      {...register('query_data')}
-                      label=""
-                      placeholder="Pełny adres punktu..."
-                      error={errors.query_data?.message}
-                      className="bg-white min-h-[100px]"
-                    />
-                    <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Szerokość (Lat)</label>
-                        <input
-                          {...register('latitude')}
-                          type="text"
-                          className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                          placeholder="np. 52.237"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Długość (Lng)</label>
-                        <input
-                          {...register('longitude')}
-                          type="text"
-                          className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                          placeholder="np. 21.017"
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Opis Punktu</label>
+                        <Textarea
+                          {...register('description')}
+                          label=""
+                          placeholder="Opisz swoją ofertę, klimat i specjalizację..."
+                          error={errors.description?.message}
+                          className="bg-slate-50/50 min-h-[220px] rounded-[1.25rem] border-none focus:bg-white p-6"
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
                 </div>
 
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col h-full">
-                  <div className="flex items-center gap-3 mb-4 text-primary">
-                    <FileText className="w-5 h-5" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Opis i Szczegóły</span>
-                  </div>
-                  <div className="flex-1 flex flex-col">
-                    <Textarea
-                      {...register('description')}
-                      label=""
-                      placeholder="Opisz swój punkt, asortyment i godziny otwarcia..."
-                      error={errors.description?.message}
-                      className="bg-white flex-1 min-h-[250px]"
-                    />
-                  </div>
+                {/* Right Side: Logistics & Presence */}
+                <div className="lg:col-span-5 space-y-10">
+                  <section className="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100/50">
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+                        <MapPin className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-brand-dark uppercase tracking-widest leading-none">Lokalizacja</h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gdzie Cię znaleźć?</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="col-span-2">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Miasto</label>
+                          <input
+                            {...register('city')}
+                            className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-sm font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                            placeholder="np. Warszawa"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Adres Pełny</label>
+                          <input
+                            {...register('query_data')}
+                            className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-sm font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                            placeholder="ul. Zielona 4/2..."
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Lat</label>
+                          <input
+                            {...register('latitude')}
+                            className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                            placeholder="52.2..."
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Lng</label>
+                          <input
+                            {...register('longitude')}
+                            className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                            placeholder="21.0..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100/50">
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+                        <Navigation className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-brand-dark uppercase tracking-widest leading-none">Kontakt i Firmowe</h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Dane biznesowe</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <input
+                        {...register('phone')}
+                        placeholder="Numer telefonu"
+                        className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                      />
+                      <input
+                        {...register('email')}
+                        placeholder="Adres E-mail"
+                        className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                      />
+                      <input
+                        {...register('verification_id')}
+                        placeholder="NIP / REGON"
+                        className="w-full bg-white border border-slate-100 rounded-xl px-5 py-3.5 text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                      />
+                    </div>
+                  </section>
                 </div>
               </div>
 

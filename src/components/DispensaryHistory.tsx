@@ -6,7 +6,7 @@ import { useToastStore } from '../store/toastStore';
 import { useAuthStore } from '../store/authStore';
 import { 
   Save, Send, Package, Calendar, Loader2, Trash2, X, Search, 
-  User, Scissors, Upload, Move, MapPin, Info, Store, FileText
+  User, Scissors, Upload, Move, MapPin, Info, Store, FileText, Navigation
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
