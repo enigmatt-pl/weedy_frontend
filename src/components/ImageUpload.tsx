@@ -210,12 +210,12 @@ export const ImageUpload = ({ images, onImagesChange, onNext }: ImageUploadProps
         />
         <label htmlFor="file-upload" className="cursor-pointer group">
           <Upload className={`w-16 h-16 mx-auto mb-6 transition-transform duration-300 group-hover:-translate-y-2 ${isDragging ? 'text-primary' : 'text-slate-300'}`} />
-          <p className="text-xl font-black text-brand-dark mb-2 uppercase tracking-tight">
-            Terminal Przesyłania Danych
+          <p className="text-xl font-extrabold text-brand-dark mb-2 tracking-tight">
+            Prześlij zdjęcia punktu
           </p>
           <div className="flex items-center justify-center gap-2 mb-4">
-             <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${images.length >= MAX_IMAGES ? 'bg-red-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
-                {images.length} / {MAX_IMAGES} Platform Slotów
+             <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded ${images.length >= MAX_IMAGES ? 'bg-red-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                {images.length} / {MAX_IMAGES} Zdjęć
              </span>
              {images.length >= MAX_IMAGES && (
                  <div className="flex items-center gap-1 text-red-500 animate-pulse">
@@ -225,7 +225,7 @@ export const ImageUpload = ({ images, onImagesChange, onNext }: ImageUploadProps
              )}
           </div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            {images.length >= MAX_IMAGES ? 'Usuń obrazy, aby dodać nowe' : 'Upuść komponenty wizualne lub kliknij, aby zainicjować'}
+            {images.length >= MAX_IMAGES ? 'Usuń obrazy, aby dodać nowe' : 'Przeciągnij zdjęcia tutaj lub kliknij, aby wybrać z dysku'}
           </p>
         </label>
       </div>
@@ -233,7 +233,7 @@ export const ImageUpload = ({ images, onImagesChange, onNext }: ImageUploadProps
       {images.length > 0 && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 border-b border-slate-100 pb-2">
-            Kolejka przetwarzania: <span className="text-primary">{images.length} plików</span>
+            Wybrane zdjęcia: <span className="text-primary">{images.length} plików</span>
           </p>
           <DndContext
             sensors={sensors}
@@ -298,7 +298,7 @@ export const ImageUpload = ({ images, onImagesChange, onNext }: ImageUploadProps
           size="lg" 
           className="w-full md:w-auto shadow-xl shadow-emerald-500/20"
         >
-          {images.length === 0 ? 'Kontynuuj bez zdjęć' : 'Inicjalizacja Procedury'}
+          {images.length === 0 ? 'Kontynuuj bez zdjęć' : 'Zatwierdź i przejdź dalej'}
         </Button>
       </div>
     </div>

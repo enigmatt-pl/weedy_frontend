@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { PlatformSearchResponse } from '../types/platform';
 
 export const apiClient = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/api/v1` || 'http://localhost:3000/api/v1',
@@ -18,31 +17,16 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-export interface GenerateDispensaryResponse {
-  id: number;
-  status: 'generating' | 'draft' | 'published';
-  credits_remaining: number;
-  reasoning?: string;
-  title?: string;
-  description?: string;
-  estimated_price?: number;
-  image_urls?: string[];
-  images?: string[];
-  platform_configured?: boolean;
-}
-
 export interface Dispensary {
   id: number;
-  query_data: string;
   title: string;
   description: string;
-  reasoning?: string;
   estimated_price: number;
-  status: 'generating' | 'draft' | 'published';
+  status: 'draft' | 'published' | 'active' | 'archived';
   image_urls?: string[];
   images?: string[];
-  platform_product_id?: string;
   created_at: string;
+  location?: string;
 }
 
 export const AuthApi = {
@@ -76,24 +60,6 @@ export interface PaginatedResponse<T> {
 }
 
 export const DispensariesApi = {
-  generate: async (queryData: string, files: File[]): Promise<GenerateDispensaryResponse> => {
-    const formData = new FormData();
-    formData.append('query_data', queryData);
-    Array.from(files).forEach((file) => formData.append('images[]', file));
-
-    const { data } = await apiClient.post<{ dispensary?: GenerateDispensaryResponse; credits_remaining?: number }>('/dispensaries/generate', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    // Support both direct response and { dispensary: ..., credits_remaining: ... }
-    if (data.dispensary) {
-      return { ...data.dispensary, credits_remaining: data.credits_remaining || 0 };
-    }
-    return data as unknown as GenerateDispensaryResponse;
-  },
-
   getAll: async (page = 1, perPage = 10, userId?: string | number): Promise<PaginatedResponse<Dispensary>> => {
     const { data } = await apiClient.get<PaginatedResponse<Dispensary>>('/dispensaries', {
       params: { page, per_page: perPage, user_id: userId }
@@ -106,13 +72,10 @@ export const DispensariesApi = {
     return data.dispensary || (data as unknown as Dispensary);
   },
 
-  create: (payload: Record<string, unknown> | FormData) => {
-    if (payload instanceof FormData) {
-      return apiClient.post('/dispensaries', payload, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-    }
-    return apiClient.post('/dispensaries', { dispensary: payload });
+  create: (payload: FormData) => {
+    return apiClient.post('/dispensaries', payload, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   },
 
   publish: (id: string | number) =>
@@ -124,30 +87,10 @@ export const DispensariesApi = {
   update: (id: number | string, payload: Record<string, unknown> | FormData) => {
     if (payload instanceof FormData) {
       return apiClient.post(`/dispensaries/${id}`, payload, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
     }
     return apiClient.put(`/dispensaries/${id}`, { dispensary: payload });
-  },
-};
-export const PlatformApi = {
-  getAuthUrl: async (): Promise<string> => {
-    const { data } = await apiClient.get<{ url: string }>('/platform_integration/auth_url');
-    return data.url;
-  },
-
-  checkStatus: async (): Promise<boolean> => {
-    const { data } = await apiClient.get<{ connected: boolean }>('/platform_integration/status');
-    return data.connected;
-  },
-
-  searchProducts: async (query: string): Promise<PlatformSearchResponse> => {
-    const { data } = await apiClient.get<PlatformSearchResponse>('/platform/products', {
-      params: { query }
-    });
-    return data;
   },
 };
 
@@ -164,4 +107,27 @@ export const AdminApi = {
     apiClient.get(`/admin/analytics/page_views?page=${page}&per_page=${perPage}&search=${search}&language=${language}&country=${country}`),
   getAnalyticsSummary: () =>
     apiClient.get('/admin/analytics/summary'),
+};
+
+export const PlatformApi = {
+  getAuthUrl: async (): Promise<string> => {
+    const { data } = await apiClient.get<{ url: string }>('/platform/auth_url');
+    return data.url;
+  },
+
+  checkStatus: async (): Promise<boolean> => {
+    try {
+      const { data } = await apiClient.get<{ connected: boolean }>('/platform/status');
+      return data.connected;
+    } catch {
+      return false;
+    }
+  },
+
+  searchProducts: async (query: string): Promise<{ products: any[] }> => {
+    const { data } = await apiClient.get('/platform/search', {
+      params: { query }
+    });
+    return data;
+  }
 };
