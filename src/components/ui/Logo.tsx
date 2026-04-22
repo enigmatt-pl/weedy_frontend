@@ -40,10 +40,10 @@ export const Logo: React.FC<LogoProps> = ({ className = '', variant = 'dark', si
         className={`${sizes[size]} w-auto ${iconColors[variant]}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M12 2C12 2 12 12 2 12C12 12 12 22 22 12C12 12 12 2 12 2Z" />
-        <path d="M12 2V22" />
+        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
       </svg>
-      <span className="uppercase leading-none mt-0.5 whitespace-nowrap font-bold tracking-widest text-xs">
+      <span className="font-black leading-none mt-0.5 whitespace-nowrap text-lg">
         WEE<span className={variant === 'brand' ? 'text-slate-900' : 'text-primary'}>DY</span>
       </span>
     </Link>

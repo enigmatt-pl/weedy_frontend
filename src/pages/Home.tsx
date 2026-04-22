@@ -14,11 +14,10 @@ import { Security } from '../components/landing/Security';
 import { Footer } from '../components/landing/Footer';
 
 const NAV_LINKS = [
+  { label: 'Odkrywaj', href: '/search' },
+  { label: 'Mapa', href: '/search?view=map' },
   { label: 'Funkcje', href: '#features' },
   { label: 'Jak działamy', href: '#how-it-works' },
-  { label: 'Analityka', href: '#roi' },
-  { label: 'Cennik', href: '#pricing' },
-  { label: 'Bezpieczeństwo', href: '#security' },
 ];
 
 export const Home = () => {
@@ -39,13 +38,23 @@ export const Home = () => {
           <Logo size="md" />
           <div className="hidden lg:flex items-center ml-12 gap-8">
             {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-semibold text-slate-500 hover:text-primary transition-all"
-              >
-                {link.label}
-              </a>
+              link.href.startsWith('/') ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="text-sm font-bold text-slate-500 hover:text-primary transition-all"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-bold text-slate-500 hover:text-primary transition-all"
+                >
+                  {link.label}
+                </a>
+              )
             ))}
           </div>
         </div>

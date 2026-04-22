@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Clock, Star, Package, Loader2, SlidersHorizontal, X, Leaf, LayoutGrid, Map as MapIcon } from 'lucide-react';
 import { DispensariesApi, Dispensary } from '../lib/api';
 import { Map } from '../components/Map';
@@ -29,16 +29,21 @@ const stripMarkdown = (text: string | null | undefined): string => {
 
 export const SearchPage = () => {
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get('q') || '';
+  const initialCategory = searchParams.get('category') || 'all';
+  const initialView = searchParams.get('view') === 'map' ? 'map' : 'grid';
+
+  const [query, setQuery] = useState(initialQuery);
   const [selectedCity, setSelectedCity] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [dispensaries, setDispensaries] = useState<Dispensary[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const [showFilters, setShowFilters] = useState(initialCategory !== 'all' || initialQuery !== '');
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>(initialView);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
