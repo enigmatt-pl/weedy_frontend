@@ -62,7 +62,7 @@ export const Login = () => {
 
         <div className="relative z-10 space-y-10">
           <div className="space-y-4">
-            <h2 className="text-5xl font-black text-white italic tracking-tighter leading-none">
+            <h2 className="text-5xl font-bold text-white  tracking-tight leading-none">
               TERMINAL <br/> DOSTĘPU
             </h2>
             <div className="h-1 w-24 bg-primary rounded-full"></div>
@@ -72,18 +72,18 @@ export const Login = () => {
           </div>
 
           <div className="space-y-6">
-             <div className="flex items-center gap-4 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">
+             <div className="flex items-center gap-4 text-slate-500 text-[10px] font-bold tracking-wider">
                 <ShieldAlert className="w-4 h-4 text-primary" />
                  Szyfrowanie End-to-End
              </div>
-             <div className="flex items-center gap-4 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">
+             <div className="flex items-center gap-4 text-slate-500 text-[10px] font-bold tracking-wider">
                 <Key className="w-4 h-4 text-primary" />
                  Zarządzanie kredytami
              </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 border-t border-white/5 pt-8">
+        <div className="relative z-10 flex items-center gap-6 text-[10px] font-bold tracking-wider text-slate-500 border-t border-white/5 pt-8">
            <span>SESJA: WEEDY_SECURE</span>
            <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
            <span>v2.4.0</span>
@@ -102,10 +102,10 @@ export const Login = () => {
 
           <div className="w-full space-y-12">
             <div className="animate-in slide-in-from-bottom-4 duration-500">
-              <h1 className="text-3xl md:text-4xl font-black text-brand-dark mb-2 tracking-tighter uppercase italic">
+              <h1 className="text-3xl md:text-4xl font-bold text-brand-dark mb-2 tracking-tight uppercase ">
                 Inicjalizacja Sesji
               </h1>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Zaloguj się, aby uzyskać dostęp do panelu</p>
+              <p className="text-xs font-bold text-slate-400 tracking-wider">Zaloguj się, aby uzyskać dostęp do panelu</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 animate-in delay-200 fade-in duration-700">
@@ -142,9 +142,9 @@ export const Login = () => {
                 </Button>
 
                 <div className="text-center pt-8 border-t border-slate-100">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
+                  <p className="text-xs font-bold text-slate-500 tracking-wide leading-relaxed">
                     Brak autoryzacji w systemie? <br className="md:hidden"/>
-                    <Link id="login-register-link" to="/register" className="text-primary hover:text-emerald-700 font-black transition-colors">
+                    <Link id="login-register-link" to="/register" className="text-primary hover:text-emerald-700 font-bold transition-colors">
                       [ UTWÓRZ PROFIL ]
                     </Link>
                   </p>

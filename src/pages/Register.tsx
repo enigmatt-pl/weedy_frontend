@@ -92,7 +92,7 @@ export const Register = () => {
 
         <div className="relative z-10 space-y-12">
           <div className="space-y-4">
-            <h2 className="text-5xl font-black text-white italic tracking-tighter leading-none">
+            <h2 className="text-5xl font-bold text-white  tracking-tight leading-none">
               REKRUTACJA <br/> OPERATORA
             </h2>
             <div className="h-1 w-24 bg-primary rounded-full"></div>
@@ -107,7 +107,7 @@ export const Register = () => {
                 <ShieldCheck className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h4 className="text-white font-bold text-xs uppercase tracking-widest">Bezpieczeństwo</h4>
+                <h4 className="text-white font-bold text-xs tracking-wide">Bezpieczeństwo</h4>
                 <p className="text-slate-500 text-[10px] mt-1 uppercase font-bold tracking-tight">Protokół JWT & SSL</p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export const Register = () => {
                 <Zap className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h4 className="text-white font-bold text-xs uppercase tracking-widest">Wydajność</h4>
+                <h4 className="text-white font-bold text-xs tracking-wide">Wydajność</h4>
                 <p className="text-slate-500 text-[10px] mt-1 uppercase font-bold tracking-tight">Sidekiq Asynchronic</p>
               </div>
             </div>
@@ -125,14 +125,14 @@ export const Register = () => {
                 <Globe className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h4 className="text-white font-bold text-xs uppercase tracking-widest">Skalowanie</h4>
+                <h4 className="text-white font-bold text-xs tracking-wide">Skalowanie</h4>
                 <p className="text-slate-500 text-[10px] mt-1 uppercase font-bold tracking-tight">Multi-account</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 border-t border-white/5 pt-8">
+        <div className="relative z-10 flex items-center gap-6 text-[10px] font-bold tracking-wider text-slate-500 border-t border-white/5 pt-8">
            <span>© 2026 WEEDY</span>
            <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
            <span>Terminal v2.4.0</span>
@@ -151,10 +151,10 @@ export const Register = () => {
 
           <div className="w-full space-y-12">
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-brand-dark mb-2 tracking-tighter uppercase italic">
+              <h1 className="text-3xl md:text-4xl font-bold text-brand-dark mb-2 tracking-tight uppercase ">
                 Inicjalizacja Konta
               </h1>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Zarejestruj się, aby uzyskać dostęp do terminala</p>
+              <p className="text-xs font-bold text-slate-400 tracking-wider">Zarejestruj się, aby uzyskać dostęp do terminala</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -207,7 +207,7 @@ export const Register = () => {
               <div className="space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-inner">
                 <div className="flex items-center gap-3 border-l-2 border-primary pl-4 mb-2">
                   <AlertCircle className="w-4 h-4 text-primary" />
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Zgody Prawne</h4>
+                  <h4 className="text-[10px] font-bold tracking-wider text-slate-500">Zgody Prawne</h4>
                 </div>
 
                 <label className="flex items-start gap-4 cursor-pointer group">
@@ -250,9 +250,9 @@ export const Register = () => {
                 </Button>
 
                 <div className="text-center">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  <p className="text-xs font-bold text-slate-500 tracking-wide">
                     Posiadasz już dostęp? {' '}
-                    <Link id="register-login-link" to="/login" className="text-primary hover:text-emerald-700 font-black transition-colors">
+                    <Link id="register-login-link" to="/login" className="text-primary hover:text-emerald-700 font-bold transition-colors">
                       [ ZALOGUJ SIĘ ]
                     </Link>
                   </p>

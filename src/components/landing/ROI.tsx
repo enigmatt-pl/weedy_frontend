@@ -1,49 +1,49 @@
-import { TrendingUp, Clock, AlertCircle, TrendingDown, Zap } from 'lucide-react';
+import { Clock, CheckCircle2, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 
 const ROI_DATA = [
   {
     icon: Clock,
     title: 'Szybkość decyzji',
-    description: 'Dzięki aktualnym danym pacjenci znajdują to, czego potrzebują w kilka sekund.',
-    benefit: 'Live Tracking',
+    description: 'Aktualne dane pomagają pacjentom znaleźć otwarty punkt z odpowiednim asortymentem w kilka sekund.',
+    benefit: 'Live Data',
   },
   {
-    icon: AlertCircle,
-    title: 'Sprawdzone Dane',
-    description: 'Eliminujemy nieaktualne informacje o godzinach otwarcia czy lokalizacji.',
-    benefit: '100% Accuracy',
+    icon: CheckCircle2,
+    title: 'Sprawdzone informacje',
+    description: 'Eliminujemy przestarzałe wpisy — godziny otwarcia, lokalizacja i dostępność są zawsze aktualizowane.',
+    benefit: '100% Aktualności',
   },
   {
     icon: TrendingUp,
-    title: 'Wzrost Widoczności',
-    description: 'Dla właścicieli punktów: dotrzyj do tysięcy pacjentów szukających Twoich usług.',
+    title: 'Wzrost widoczności',
+    description: 'Dla właścicieli punktów: dotrzyj do tysięcy klientów szukających dokładnie tego, co oferujesz.',
     benefit: '+300% zasięgu',
   },
 ];
 
 export const ROI = () => {
   return (
-    <section id="roi" className="py-24 px-10 bg-white scroll-mt-20">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+    <section id="roi" className="py-24 px-6 md:px-10 bg-slate-50 scroll-mt-20">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-16">
         <div className="flex-1">
-          <div className="mb-10 text-left">
-            <h2 className="text-4xl font-black text-brand-dark uppercase tracking-tight mb-4 leading-tight">Analityka, która wspiera Twój wybór</h2>
-            <p className="text-slate-500 font-medium text-lg leading-relaxed mb-10 border-l-4 border-slate-900 pl-6">
-              Dostarczamy dane, które pomagają pacjentom i właścicielom punktów lepiej zrozumieć rynek.
+          <div className="mb-10">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-dark tracking-tight mb-4">Analityka, która wspiera Twój wybór</h2>
+            <p className="text-slate-500 font-medium text-base leading-relaxed max-w-md">
+              Dane, które pomagają pacjentom i właścicielom punktów lepiej zrozumieć lokalny rynek.
             </p>
           </div>
-          
-          <div className="space-y-6">
+
+          <div className="space-y-4">
             {ROI_DATA.map((roi, idx) => (
-              <div key={idx} className="flex gap-6 rounded border border-slate-100 p-8 hover:border-primary/20 transition-all group overflow-hidden relative">
-                <div className="absolute top-0 right-0 p-3 bg-brand-dark/5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
+              <div key={idx} className="bg-white flex gap-5 rounded-3xl border border-slate-100 p-6 hover:border-primary/20 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500 group overflow-hidden relative">
+                <div className="absolute top-3 right-4 text-[10px] font-bold text-slate-400 group-hover:text-primary transition-colors tracking-widest uppercase">
                   {roi.benefit}
                 </div>
-                <div className="w-12 h-12 bg-slate-50 rounded flex items-center justify-center mb-6 shadow-sm flex-shrink-0 group-hover:bg-primary/20 transition-all">
-                  <roi.icon className="w-5 h-5 text-brand-dark group-hover:text-primary transition-all" />
+                <div className="w-11 h-11 bg-primary/10 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <roi.icon className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-brand-dark mb-2 uppercase tracking-tighter">
+                  <h3 className="text-base font-bold text-brand-dark mb-1.5 tracking-tight">
                     {roi.title}
                   </h3>
                   <p className="text-slate-500 text-sm leading-relaxed font-medium">
@@ -54,24 +54,20 @@ export const ROI = () => {
             ))}
           </div>
         </div>
-        
-        <div className="flex-1 w-full flex flex-col gap-6">
-          <div className="bg-brand-dark text-white p-10 rounded shadow-2xl relative overflow-hidden transform hover:-rotate-1 transition-transform">
-            <TrendingDown className="absolute -bottom-4 -right-4 w-32 h-32 opacity-10 text-primary rotate-45" />
-            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4">Tradycyjne szukanie</h4>
-            <div className="flex items-center gap-3 text-4xl font-black text-slate-300 mb-2">
-              <span className="line-through decoration-red-500">Chaos i Niepewność</span>
-            </div>
-            <p className="text-xs font-medium text-slate-500">Brak aktualnych informacji, strata czasu.</p>
+
+        <div className="flex-1 w-full flex flex-col gap-4">
+          <div className="bg-slate-100 text-slate-700 p-10 rounded-3xl relative overflow-hidden">
+            <TrendingDown className="absolute -bottom-4 -right-4 w-28 h-28 opacity-10 rotate-45" />
+            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Bez Weedy</h4>
+            <div className="text-2xl font-bold text-slate-500 mb-2 line-through decoration-red-400">Chaos i niepewność</div>
+            <p className="text-sm font-medium text-slate-400">Nieaktualne informacje, zmarnowany czas, puste wizyty.</p>
           </div>
-          
-          <div className="bg-primary text-white p-10 rounded shadow-2xl relative overflow-hidden transform hover:rotate-1 transition-transform border-[12px] border-white/10 ring-8 ring-brand-dark">
-            <Zap className="absolute -bottom-4 -right-4 w-32 h-32 opacity-20 text-white rotate-12" />
-            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60 mb-4">Standard Weedy</h4>
-            <div className="flex items-center gap-3 text-6xl font-black text-white mb-2 tracking-tighter italic">
-              Pełna Kontrola
-            </div>
-            <p className="text-sm font-black uppercase tracking-widest">Precyzyjna mapa. Aktualne dane.</p>
+
+          <div className="bg-primary text-white p-10 rounded-3xl relative overflow-hidden shadow-2xl shadow-emerald-500/30">
+            <Zap className="absolute -bottom-4 -right-4 w-28 h-28 opacity-20 rotate-12" />
+            <h4 className="text-xs font-bold uppercase tracking-widest text-white/60 mb-4">Z Weedy</h4>
+            <div className="text-4xl font-extrabold text-white mb-2 tracking-tight">Pełna kontrola</div>
+            <p className="text-sm font-bold uppercase tracking-widest text-white/70">Precyzyjna mapa · Aktualne dane · Zero niespodzianek</p>
           </div>
         </div>
       </div>

@@ -6,80 +6,82 @@ export const Pricing = () => {
 
   if (isBeta) {
     return (
-      <section id="pricing" className="py-24 px-10 bg-brand-dark scroll-mt-20 overflow-hidden">
+      <section id="pricing" className="py-24 px-6 md:px-10 bg-white scroll-mt-20 overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
           {/* Decorative Elements */}
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="mb-16 text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 border border-primary/10 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Program Wczesnego Dostępu</span>
+              <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Program Wczesnego Dostępu</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-4 leading-tight italic">
-              Zasilamy Twój biznes <span className="text-primary italic">bezpłatnie</span>
+            <h2 className="text-4xl md:text-6xl font-extrabold text-brand-dark mb-4 leading-tight tracking-tight">
+              Zasilamy Twój biznes <span className="text-primary">bezpłatnie</span>
             </h2>
-            <p className="text-slate-400 font-bold uppercase tracking-widest text-[11px] max-w-2xl mx-auto leading-relaxed">
-              Faza Beta to czas na wspólny rozwój. W zamian za merytoryczny feedback, my zapewniamy darmowe limity na start Twojej przygody z AI.
+            <p className="text-slate-500 font-medium text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+              Faza Beta to czas na wspólny rozwój. W zamian za merytoryczny feedback, zapewniamy darmowe limity na start Twojej przygody z Weedy.
             </p>
           </div>
 
-          <div className="bg-slate-900/50 backdrop-blur-xl p-8 md:p-16 rounded-[2rem] border-2 border-slate-800 shadow-2xl relative overflow-hidden group">
+          <div className="bg-white p-8 md:p-16 rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/60 relative overflow-hidden group">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-4">Twój aktywny plan</h3>
-                  <h4 className="text-4xl font-black text-white uppercase tracking-tight italic">Weedy Beta Partner</h4>
+                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Twój aktywny plan</h3>
+                  <h4 className="text-4xl font-extrabold text-brand-dark tracking-tight">Weedy Beta Partner</h4>
                 </div>
                 
                 <div className="flex items-baseline gap-3">
-                  <span className="text-7xl md:text-8xl font-black text-white tracking-tighter italic">0,00</span>
+                  <span className="text-7xl md:text-8xl font-black text-brand-dark tracking-tighter">0,00</span>
                   <div className="flex flex-col">
-                    <span className="text-primary font-black uppercase tracking-widest text-[10px] line-through opacity-50">149,00 PLN</span>
-                    <span className="text-slate-500 font-black uppercase tracking-widest text-[10px]">PLN / NETTO MC</span>
+                    <span className="text-primary font-bold uppercase tracking-widest text-[10px] line-through opacity-30">149,00 PLN</span>
+                    <span className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">PLN / MC</span>
                   </div>
                 </div>
 
-                <div className="space-y-5 pt-8 border-t border-slate-800">
+                <div className="space-y-5 pt-8 border-t border-slate-50">
                   {[
-                    'Darmowa wizytówka Twojego punktu na mapie',
-                    'Dostęp do panelu analitycznego Weedy Analytics',
-                    'Możliwość dodawania aktualnego asortymentu',
+                    'Darmowa wizytówka punktu na mapie',
+                    'Dostęp do Weedy Analytics Dashboard',
+                    'Dodawanie aktualnego asortymentu',
                     'System weryfikacji opinii pacjentów',
-                    'Promocja w wynikach wyszukiwania lokalnego'
+                    'Promocja w wynikach wyszukiwania'
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4 group/item">
-                      <div className="w-5 h-5 rounded bg-primary/10 flex items-center justify-center group-hover/item:bg-primary transition-colors">
+                      <div className="w-5 h-5 rounded-full bg-primary/5 flex items-center justify-center group-hover/item:bg-primary transition-colors">
                         <Check className="w-3 h-3 text-primary group-hover/item:text-white" />
                       </div>
-                      <span className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-300">{item}</span>
+                      <span className="text-xs md:text-sm font-medium text-slate-600">{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-brand-dark p-10 rounded-3xl border border-slate-800 shadow-3xl relative">
-                <div className="absolute -top-4 -right-4 bg-primary text-white text-[9px] font-black px-4 py-2 rounded-full shadow-lg uppercase tracking-widest animate-bounce">
+              <div className="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 shadow-inner relative">
+                <div className="absolute -top-4 -right-4 bg-primary text-white text-[9px] font-black px-4 py-2 rounded-full shadow-xl uppercase tracking-widest animate-bounce">
                   Limited Spots
                 </div>
                 
                 <div className="flex items-center gap-4 mb-8 text-primary">
-                  <MessageSquare className="w-8 h-8" />
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.3em]">Protokół Współpracy</h5>
+                  <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                  <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Partnerstwo Strategiczne</h5>
                 </div>
 
-                <p className="text-sm md:text-base text-slate-400 font-medium leading-relaxed italic mb-10 border-l-2 border-primary pl-6">
-                  "Dołączając do nas w fazie Beta, zyskujesz dożywotni status Partnera oraz darmowy dostęp do wszystkich funkcji analitycznych i promocyjnych przez pierwsze 12 miesięcy."
+                <p className="text-sm md:text-base text-slate-600 font-medium leading-relaxed mb-10 italic">
+                  "Dołączając do nas w fazie Beta, zyskujesz dożywotni status Partnera oraz darmowy dostęp do funkcji analitycznych i promocyjnych przez pierwsze 12 miesięcy."
                 </p>
                 <Link 
                   to="/register"
-                  className="w-full py-6 bg-white text-brand-dark text-[12px] font-black uppercase tracking-[0.4em] rounded-xl shadow-2xl hover:bg-primary hover:text-white transition-all transform hover:-translate-y-1 block text-center"
+                  className="w-full py-6 bg-primary text-white text-[14px] font-bold rounded-2xl shadow-2xl shadow-emerald-500/30 hover:bg-emerald-600 transition-all transform hover:-translate-y-1 block text-center"
                 >
                   Dołącz do Beta za darmo
                 </Link>
-                <p className="text-center text-[8px] font-bold text-slate-600 uppercase tracking-widest mt-6">
-                  Inicjalizacja profilu zajmuje mniej niż 30 sekund
+                <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6">
+                  Rejestracja zajmuje mniej niż 30 sekund
                 </p>
               </div>
             </div>

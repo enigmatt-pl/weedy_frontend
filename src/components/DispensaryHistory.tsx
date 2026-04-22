@@ -133,7 +133,7 @@ const stripMarkdown = (text: string | null | undefined): string => {
   return text
     .replace(/#{1,6}\s+/g, '')         // headings
     .replace(/\*\*(.*?)\*\*/g, '$1')   // bold
-    .replace(/\*(.*?)\*/g, '$1')       // italic
+    .replace(/\*(.*?)\*/g, '$1')       // 
     .replace(/`(.*?)`/g, '$1')         // inline code
     .replace(/\[(.*?)\]\(.*?\)/g, '$1') // links
     .replace(/^\s*[-*+]\s+/gm, '')     // list bullets
@@ -389,7 +389,7 @@ export const DispensaryHistory = () => {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-slate-500">
         <Loader2 className="w-12 h-12 animate-spin mb-4 text-blue-600" />
-        <p className="text-lg font-bold uppercase tracking-widest text-xs">Pobieranie historii ofert...</p>
+        <p className="text-lg font-bold tracking-wide text-xs">Pobieranie historii ofert...</p>
       </div>
     );
   }
@@ -419,7 +419,7 @@ export const DispensaryHistory = () => {
             <button
               id="history-back-to-list-btn"
               onClick={() => setSelectedDispensary(null)}
-              className="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-primary transition-colors"
+              className="flex items-center text-[10px] font-bold tracking-wide text-slate-500 hover:text-primary transition-colors"
             >
               ← Wróć do listy wizytówek
             </button>
@@ -430,20 +430,20 @@ export const DispensaryHistory = () => {
               <div className="flex flex-col gap-2 mb-8">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <span className={`px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest ${selectedDispensary.status === 'published' ? 'bg-green-600 text-white' : 'bg-primary text-white'
+                    <span className={`px-3 py-1 rounded text-[10px] font-bold tracking-wide ${selectedDispensary.status === 'published' ? 'bg-green-600 text-white' : 'bg-primary text-white'
                       }`}>
                       {selectedDispensary.status === 'published' ? 'Opublikowane' : 'Szkic'}
                     </span>
-                    <span className="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-black rounded tracking-widest">
+                    <span className="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-bold rounded tracking-widest">
                       ID #{selectedDispensary.id}
                     </span>
                   </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-slate-400 tracking-wide">
                     Utworzono: {new Date(selectedDispensary.created_at).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 <div className="bg-slate-50 p-4 rounded border-l-4 border-slate-900 overflow-hidden">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">Opis Punktu / Lokalizacja</p>
+                  <p className="text-[9px] font-bold tracking-wide text-slate-400 mb-2">Opis Punktu / Lokalizacja</p>
                   <p className="text-[11px] font-medium text-slate-600 whitespace-pre-wrap leading-relaxed">
                     {selectedDispensary.query_data || 'Brak danych lokalizacji'}
                   </p>
@@ -459,14 +459,14 @@ export const DispensaryHistory = () => {
                   error={errors.title?.message}
                   disabled={saving}
                   {...register('title')}
-                  className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase"
+                  className="text-2xl md:text-3xl font-bold  tracking-tight uppercase"
                 />
               </div>
 
               <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 md:gap-12">
                 <div className="xl:col-span-2 space-y-8">
                   <div>
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-4 border-b border-slate-100 pb-2">Opis techniczny</h3>
+                    <h3 className="text-[11px] uppercase tracking-widest font-bold text-slate-400 mb-4 border-b border-slate-100 pb-2">Opis punktu</h3>
                     <Textarea
                       id="history-edit-description"
                       placeholder="Wprowadź opis punktu"
@@ -492,14 +492,14 @@ export const DispensaryHistory = () => {
                           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                             <BrainCircuit className={`w-5 h-5 transition-colors ${showReasoning ? 'text-primary' : 'text-slate-400'}`} />
                           </div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-600 transition-colors">Analiza Techniczna AI (Reasoning)</p>
+                          <p className="text-[10px] font-bold tracking-wide text-slate-400 group-hover:text-slate-600 transition-colors">Analiza Techniczna AI (Reasoning)</p>
                         </div>
                         {showReasoning ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                       </button>
 
                       {showReasoning && (
                         <div className="px-4 py-6 animate-in slide-in-from-top-2 duration-300 border-t border-slate-200/60 mt-2">
-                          <p className="text-xs font-medium text-slate-600 leading-relaxed italic whitespace-pre-wrap font-mono">
+                          <p className="text-xs font-medium text-slate-600 leading-relaxed  whitespace-pre-wrap font-mono">
                             "{selectedDispensary.reasoning}"
                           </p>
                         </div>
@@ -509,8 +509,8 @@ export const DispensaryHistory = () => {
                 </div>
 
                 <div className="xl:col-span-2 space-y-10">
-                  <div className="bg-brand-dark p-6 md:p-8 rounded shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 text-right">Cena docelowa (PLN)</p>
+                  <div className="bg-slate-50 border border-slate-100 p-6 md:p-8 rounded-2xl">
+                    <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-2 text-right">Sugerowana cena (PLN)</p>
                     <div className="flex flex-col items-end">
                       <div className="flex items-center gap-2">
                         <input
@@ -519,9 +519,9 @@ export const DispensaryHistory = () => {
                           step="0.01"
                           disabled={saving}
                           {...register('estimated_price', { valueAsNumber: true })}
-                          className="bg-brand-dark border-b-2 border-primary text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter italic w-32 text-center outline-none focus:border-white transition-colors"
+                          className="bg-transparent border-b border-primary/30 text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight w-32 text-center outline-none focus:border-primary transition-colors"
                         />
-                        <span className="text-sm md:text-base text-white opacity-50 font-black italic">PLN</span>
+                        <span className="text-sm md:text-base text-slate-500 font-bold">PLN</span>
                       </div>
                       {errors.estimated_price && (
                         <p className="text-[9px] font-bold text-red-500 uppercase mt-2">{errors.estimated_price.message}</p>
@@ -531,7 +531,7 @@ export const DispensaryHistory = () => {
 
                   {localImages.length > 0 && (
                     <div>
-                      <h3 className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-4 flex items-center justify-between">
+                      <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400 mb-4 flex items-center justify-between">
                         <span>Dokumentacja wizualna <span className="text-primary">[{localImages.length} / {MAX_IMAGES}]</span></span>
                         {localImages.length < MAX_IMAGES && (
                           <label className="cursor-pointer text-primary hover:text-emerald-700 transition-colors flex items-center gap-1">
@@ -618,12 +618,12 @@ export const DispensaryHistory = () => {
         <>
           <div className="mb-8 md:mb-12 border-l-4 border-primary pl-4 md:pl-6 flex items-center justify-between">
             <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-brand-dark mb-1 uppercase tracking-tight">
-                {userId ? 'Zasoby operatora' : 'Twoje zasoby'}
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-brand-dark mb-1 tracking-tight">
+                {userId ? 'Wizytówki partnera' : 'Twoje wizytówki'}
               </h1>
-              <p className="text-slate-400 font-bold uppercase tracking-widest text-[9px] md:text-[11px] flex items-center gap-2">
+              <p className="text-slate-400 font-bold tracking-wide text-[9px] md:text-[11px] flex items-center gap-2">
                 {userId && <User className="w-3 h-3 text-primary" />}
-                {userId ? `Terminal: Przegląd historyczny dla ID: ${userId}` : 'Repozytorium wizytówek wygenerowanych przez system'}
+                {userId ? `Przegląd wizytówek dla użytkownika ID: ${userId}` : 'Zarządzaj swoimi punktami na platformie Weedy'}
               </p>
             </div>
             {userId && (
@@ -632,7 +632,7 @@ export const DispensaryHistory = () => {
                 variant="secondary"
                 size="sm"
                 onClick={() => setSearchParams({})}
-                className="text-[10px] font-black uppercase tracking-widest h-8"
+                className="text-[10px] font-bold tracking-wide h-8"
               >
                 ← MOJA HISTORIA
               </Button>
@@ -645,7 +645,7 @@ export const DispensaryHistory = () => {
                 <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Package className="w-8 h-8 text-blue-600" />
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2 uppercase tracking-tight">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2 tracking-tight">
                   Historia ofert
                 </h2>
                 <p className="text-slate-500 text-sm md:text-lg max-w-md mx-auto">
@@ -673,7 +673,7 @@ export const DispensaryHistory = () => {
                       </div>
                     )}
                     {dispensary.status === 'published' && (
-                      <div className="absolute top-2 left-2 bg-green-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded shadow-lg">
+                      <div className="absolute top-2 left-2 bg-green-600 text-white text-[8px] font-bold tracking-wide px-2 py-1 rounded shadow-lg">
                         LIVE
                       </div>
                     )}
@@ -682,36 +682,36 @@ export const DispensaryHistory = () => {
                   <div className="flex-1 flex flex-col">
                     <div className="p-6 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="flex items-center text-[10px] font-black uppercase tracking-widest text-primary truncate max-w-[250px]" title={dispensary.query_data || ''}>
+                        <span className="flex items-center text-[10px] font-bold tracking-wide text-primary truncate max-w-[250px]" title={dispensary.query_data || ''}>
                           <Package className="w-3 h-3 mr-1" /> {(dispensary.query_data || '').replace(/\n/g, ' ')}
                         </span>
-                        <span className="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <span className="flex items-center text-[10px] font-bold tracking-wide text-slate-400">
                           <Calendar className="w-3 h-3 mr-1" /> 
                           {new Date(dispensary.created_at).toLocaleDateString()} {new Date(dispensary.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        <span className="flex items-center text-[10px] font-black tracking-widest text-slate-300 border-l border-slate-200 pl-3">
+                        <span className="flex items-center text-[10px] font-bold tracking-widest text-slate-300 border-l border-slate-200 pl-3">
                           ID #{dispensary.id}
                         </span>
                         {dispensary.reasoning && role === 'super_admin' && (
-                          <span className="flex items-center text-[8px] font-black bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded uppercase tracking-widest border border-blue-100">
+                          <span className="flex items-center text-[8px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded tracking-wide border border-blue-100">
                             <BrainCircuit className="w-2.5 h-2.5 mr-1" /> AI Reasoning
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-xl font-black text-brand-dark mb-2 leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">
+                      <h3 className="text-xl font-bold text-brand-dark mb-2 leading-tight tracking-tight group-hover:text-primary transition-colors">
                         {dispensary.title}
                       </h3>
 
-                      <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed font-medium mb-4 italic">
+                      <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed font-medium mb-4 ">
                         {stripMarkdown(dispensary.description)}
                       </p>
                     </div>
 
                     <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between mt-auto">
                       <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Wartość orientacyjna</span>
-                        <p className="text-xl font-black text-brand-dark tracking-tighter">
+                        <span className="text-[9px] font-bold tracking-wide text-slate-400">Cena (PLN)</span>
+                        <p className="text-xl font-bold text-brand-dark tracking-tight">
                           {Number(dispensary.estimated_price).toFixed(2)} <span className="text-xs">PLN</span>
                         </p>
                       </div>
@@ -730,19 +730,19 @@ export const DispensaryHistory = () => {
 
                         {confirmDeleteId === dispensary.id ? (
                           <div className="flex items-center gap-3 bg-red-600 px-3 py-1.5 rounded animate-in fade-in zoom-in-95 duration-200">
-                            <span className="text-[9px] text-white font-black uppercase tracking-widest">Usunąć?</span>
+                            <span className="text-[9px] text-white font-bold tracking-wide">Usunąć?</span>
                             <button
                               id={`dispensary-delete-confirm-${dispensary.id}`}
                               onClick={() => handleDelete(dispensary.id)}
                               disabled={deletingId === dispensary.id}
-                              className="text-[10px] font-black text-white hover:underline uppercase"
+                              className="text-[10px] font-bold text-white hover:underline uppercase"
                             >
                               Tak
                             </button>
                             <button
                               id={`dispensary-delete-cancel-${dispensary.id}`}
                               onClick={() => setConfirmDeleteId(null)}
-                              className="text-[10px] font-black text-white/70 hover:text-white uppercase"
+                              className="text-[10px] font-bold text-white/70 hover:text-white uppercase"
                             >
                               Nie
                             </button>
@@ -777,7 +777,7 @@ export const DispensaryHistory = () => {
                 Poprzednia
               </Button>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Strona</span>
+                <span className="text-[10px] font-bold tracking-wide text-slate-400">Strona</span>
                 <input
                   id="history-pagination-input"
                   type="number"
@@ -790,9 +790,9 @@ export const DispensaryHistory = () => {
                       setCurrentPage(page);
                     }
                   }}
-                  className="w-12 h-8 text-center bg-slate-50 border-2 border-slate-100 rounded-lg text-xs font-black text-brand-dark focus:border-primary outline-none transition-all"
+                  className="w-12 h-8 text-center bg-slate-50 border-2 border-slate-100 rounded-lg text-xs font-bold text-brand-dark focus:border-primary outline-none transition-all"
                 />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">z {meta.total_pages}</span>
+                <span className="text-[10px] font-bold tracking-wide text-slate-400">z {meta.total_pages}</span>
               </div>
               <Button
                 id="history-pagination-next"

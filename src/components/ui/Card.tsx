@@ -6,13 +6,13 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Card = ({ variant = 'default', className = '', children, ...props }: CardProps) => {
   const variants = {
-    default: 'bg-white border border-slate-200 shadow-sm transition-all duration-300',
+    default: 'bg-white border border-slate-100 shadow-xl shadow-slate-200/60 transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200/80',
     outlined: 'bg-white border border-slate-200',
   };
 
   return (
     <div
-      className={`rounded-md ${variants[variant]} ${className}`}
+      className={`rounded-3xl ${variants[variant]} ${className}`}
       {...props}
     >
       {children}

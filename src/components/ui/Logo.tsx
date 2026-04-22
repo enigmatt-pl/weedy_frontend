@@ -43,7 +43,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', variant = 'dark', si
         <path d="M12 2C12 2 12 12 2 12C12 12 12 22 22 12C12 12 12 2 12 2Z" />
         <path d="M12 2V22" />
       </svg>
-      <span className="uppercase leading-none mt-0.5 whitespace-nowrap">
+      <span className="uppercase leading-none mt-0.5 whitespace-nowrap font-bold tracking-widest text-xs">
         WEE<span className={variant === 'brand' ? 'text-slate-900' : 'text-primary'}>DY</span>
       </span>
     </Link>

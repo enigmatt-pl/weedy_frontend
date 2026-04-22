@@ -147,34 +147,35 @@ export const DispensaryResults = ({
 
   return (
     <div className={`space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 ${isGenerating ? 'opacity-70 pointer-events-none cursor-wait' : ''}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-brand-dark border-r-4 border-primary rounded-l px-6 md:px-8 py-4 md:py-6 shadow-2xl gap-4 relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-100 rounded-[2rem] px-6 md:px-10 py-6 md:py-8 shadow-xl shadow-slate-200/50 gap-6 relative overflow-hidden">
         {isGenerating && (
-           <div className="absolute inset-x-0 bottom-0 h-1 bg-primary/20">
+           <div className="absolute inset-x-0 bottom-0 h-1 bg-primary/5">
               <div className="h-full bg-primary animate-progress" style={{ width: '40%' }}></div>
            </div>
         )}
-        <div>
-          <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-1">Status Wizytówki</p>
-          <p className="text-[8px] md:text-[9px] text-primary font-black uppercase tracking-widest flex items-center gap-1.5">
-            <span className={`w-1.5 h-1.5 bg-primary rounded-full ${isGenerating ? 'animate-ping' : 'animate-pulse'}`}></span> 
-            {isGenerating ? 'Analiza w toku...' : 'Analiza zakończona'}
-          </p>
+        <div className="flex items-center gap-6">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isGenerating ? 'bg-primary/5 animate-pulse' : 'bg-emerald-50'}`}>
+            <BrainCircuit className={`w-6 h-6 ${isGenerating ? 'text-primary' : 'text-emerald-600'}`} />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1">Status Analizy</p>
+            <p className="text-sm text-slate-900 font-bold tracking-tight">
+              {isGenerating ? 'Trwa przetwarzanie danych...' : 'Wizytówka gotowa do edycji'}
+            </p>
+          </div>
         </div>
-        <div className="text-left sm:text-right flex flex-col items-end">
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Cena docelowa (PLN)</p>
+        <div className="text-left sm:text-right flex flex-col items-start sm:items-end bg-slate-50 p-4 rounded-2xl border border-slate-100">
+          <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1">Sugerowana cena (PLN)</p>
           <div className="flex items-center gap-2">
             <input
               type="number"
               step="0.01"
               disabled={isBusy}
               {...register('estimated_price', { valueAsNumber: true })}
-              className="bg-brand-dark border-b-2 border-primary text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tighter italic w-24 text-center outline-none focus:border-white transition-colors"
+              className="bg-transparent border-b border-primary/30 text-2xl md:text-3xl font-bold text-slate-900 tracking-tight w-24 text-center outline-none focus:border-primary transition-colors"
             />
-            <span className="text-xs md:text-sm text-white opacity-50 font-black italic">PLN</span>
+            <span className="text-sm text-slate-400 font-bold">PLN</span>
           </div>
-          {errors.estimated_price && (
-            <p className="text-[9px] font-bold text-red-500 uppercase mt-1">{errors.estimated_price.message}</p>
-          )}
         </div>
       </div>
       
@@ -190,14 +191,14 @@ export const DispensaryResults = ({
                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                  <BrainCircuit className={`w-5 h-5 transition-colors ${showReasoning ? 'text-primary' : 'text-slate-400'}`} />
                </div>
-               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-600 transition-colors">Analiza Techniczna AI (Reasoning)</p>
+               <p className="text-[10px] font-bold tracking-wide text-slate-400 group-hover:text-slate-600 transition-colors">Analiza Techniczna AI (Reasoning)</p>
              </div>
              {showReasoning ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
            </button>
            
            {showReasoning && (
              <div className="px-4 py-6 animate-in slide-in-from-top-2 duration-300">
-               <p className="text-xs font-medium text-slate-600 leading-relaxed italic whitespace-pre-wrap font-mono border-t border-slate-200/60 pt-6">
+               <p className="text-xs font-medium text-slate-600 leading-relaxed  whitespace-pre-wrap font-mono border-t border-slate-200/60 pt-6">
                  "{results.reasoning}"
                </p>
              </div>
@@ -207,7 +208,7 @@ export const DispensaryResults = ({
 
       <form className="space-y-6 md:space-y-8 bg-white p-6 md:p-8 rounded border border-slate-200 shadow-sm transition-all hover:shadow-md">
         <Textarea
-          label="Tytuł rynkowy"
+          label="Tytuł ogłoszenia"
           placeholder="Wprowadź tytuł oferty"
           rows={2}
           error={errors.title?.message}
@@ -217,7 +218,7 @@ export const DispensaryResults = ({
         />
 
         <Textarea
-          label="Specyfikacja techniczna / Opis"
+          label="Opis punktu"
           placeholder="Wprowadź opis oferty"
           rows={8}
           error={errors.description?.message}
@@ -255,27 +256,29 @@ export const DispensaryResults = ({
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={onRegenerate}
             disabled={isBusy}
-            className={`flex-1 py-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all border rounded font-bold flex items-center justify-center gap-3
+            className={`flex-1 py-4 text-xs font-semibold transition-all border border-transparent rounded-2xl flex items-center justify-center gap-3
               ${isGenerating 
-                ? 'bg-primary/10 text-primary border-primary animate-pulse' 
-                : 'text-primary border-primary/20 hover:text-emerald-700 hover:bg-primary/5'
+                ? 'text-primary border-primary animate-pulse' 
+                : 'text-primary hover:bg-emerald-50'
               }`}
           >
             {isGenerating && <Loader2 className="w-4 h-4 animate-spin" />}
-            {isGenerating ? '[ Procesowanie... ]' : '[ Generuj ponownie ]'}
-          </button>
-          <button
+            {isGenerating ? 'Trwa generowanie...' : 'Generuj ponownie'}
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
             onClick={onReset}
             disabled={isBusy}
-            className="flex-1 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 transition-colors font-bold disabled:opacity-30"
+            className="flex-1 py-4 text-xs font-semibold text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-colors disabled:opacity-30"
           >
-            [ Dodaj kolejny punkt ]
-          </button>
+            Dodaj kolejny punkt
+          </Button>
         </div>
       </form>
     </div>

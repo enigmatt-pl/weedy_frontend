@@ -4,7 +4,7 @@ const SECURITY_DATA = [
   {
     icon: ShieldCheck,
     title: 'Anonimowość',
-    description: 'Twoje dane wyszukiwania są prywatne. Nie profilujemy użytkowników bez ich wyraźnej zgody.',
+    description: 'Twoje wyszukiwania są prywatne. Nie profilujemy użytkowników bez ich wyraźnej zgody.',
   },
   {
     icon: Fingerprint,
@@ -14,50 +14,47 @@ const SECURITY_DATA = [
   {
     icon: Lock,
     title: 'Szyfrowanie SSL',
-    description: 'Wszystkie połączenia z naszymi serwerami są szyfrowane protokołem klasy bankowej.',
+    description: 'Wszystkie połączenia są szyfrowane protokołem klasy bankowej — Twoje dane są bezpieczne.',
   },
 ];
 
 export const Security = () => {
   return (
-    <section id="security" className="py-24 px-10 bg-brand-dark overflow-hidden relative scroll-mt-20">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-30" />
-      <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row items-center gap-16 relative z-10">
-        <div className="flex-1 w-full order-2 lg:order-1">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {SECURITY_DATA.map((security, idx) => (
-              <div key={idx} className="bg-white/5 border border-white/10 p-8 rounded-lg backdrop-blur-md shadow-2xl hover:border-primary/40 transition-all duration-500 group">
-                <div className="w-12 h-12 bg-primary rounded flex items-center justify-center mb-6 shadow-xl shadow-primary/20 ring-4 ring-primary/10 group-hover:scale-110 transition-transform">
-                  <security.icon className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-lg font-black text-white mb-4 uppercase tracking-tighter">
-                  {security.title}
-                </h3>
-                <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                  {security.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="lg:w-1/3 order-1 lg:order-2">
-          <div className="text-left">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter italic mb-6 leading-[0.9]">Standardy bezpieczeństwa</h2>
-            <p className="text-slate-500 font-black uppercase tracking-widest text-[10px] mb-10 border-l-4 border-primary pl-6 leading-relaxed">
-              Prywatność użytkowników jest naszym priorytetem. Działamy transparentnie i bezpiecznie.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-full grayscale opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2">
-                <ShieldCheck className="w-3 h-3 text-primary" />
-                <span className="text-[9px] text-white font-black uppercase tracking-widest">GDPR Verified</span>
-              </div>
-              <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-full grayscale opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2">
-                <Lock className="w-3 h-3 text-primary" />
-                <span className="text-[9px] text-white font-black uppercase tracking-widest">Bank-Grade SSL</span>
-              </div>
+    <section id="security" className="py-24 px-6 md:px-10 bg-white scroll-mt-20">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+        <div className="lg:w-1/3">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-brand-dark tracking-tight mb-6 leading-tight">
+            Bezpieczeństwo i prywatność
+          </h2>
+          <p className="text-slate-500 font-medium text-base leading-relaxed mb-8">
+            Prywatność użytkowników jest naszym priorytetem. Działamy transparentnie i w zgodzie z prawem.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <div className="px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-full flex items-center gap-2">
+              <ShieldCheck className="w-3 h-3 text-primary" />
+              <span className="text-xs font-bold text-primary uppercase tracking-widest">GDPR Verified</span>
+            </div>
+            <div className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-full flex items-center gap-2">
+              <Lock className="w-3 h-3 text-slate-500" />
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Bank-Grade SSL</span>
             </div>
           </div>
+        </div>
+
+        <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+          {SECURITY_DATA.map((item, idx) => (
+            <div key={idx} className="bg-slate-50 border border-slate-100 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 hover:border-primary/20 transition-all duration-500 group">
+              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                <item.icon className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-brand-dark mb-3 tracking-tight">
+                {item.title}
+              </h3>
+              <p className="text-slate-500 text-sm font-medium leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

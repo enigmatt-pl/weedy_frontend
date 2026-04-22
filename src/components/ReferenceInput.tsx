@@ -53,7 +53,7 @@ export const ReferenceInput = ({
           {...register('queryData')}
           className="bg-white text-sm"
         />
-        <p className="mt-3 md:mt-4 text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+        <p className="mt-3 md:mt-4 text-[9px] md:text-[10px] font-bold text-slate-400 tracking-wide leading-relaxed">
           Wklej adres lub opis punktu, który chcesz dodać. AI zidentyfikuje szczegóły na podstawie zdjęć i dostępnych danych.
         </p>
       </div>
@@ -63,7 +63,7 @@ export const ReferenceInput = ({
           type="button"
           onClick={onBack}
           disabled={loading}
-          className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 transition-colors"
+          className="text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-900 transition-colors"
         >
           [ ANULUJ ]
         </button>
@@ -71,7 +71,7 @@ export const ReferenceInput = ({
           {loading && (
             <div className="bg-emerald-50 border border-emerald-100 px-4 py-2 rounded flex items-center gap-3 animate-pulse">
               <Loader2 className="w-3 h-3 text-primary animate-spin" />
-              <p className="text-[10px] font-bold text-primary uppercase tracking-widest text-center sm:text-right leading-tight">
+              <p className="text-[10px] font-bold text-primary tracking-wide text-center sm:text-right leading-tight">
                 Analizujemy dane... Może to potrwać od 15 do 60 sekund.<br/>Prosimy nie odświeżać strony.
               </p>
             </div>

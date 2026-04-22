@@ -93,9 +93,9 @@ export const SettingsPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto animate-in fade-in duration-500">
-      <div className="mb-12 border-l-4 border-primary pl-6">
-        <h1 className="text-4xl font-black text-brand-dark mb-1 uppercase tracking-tight">System Configuration</h1>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Zarządzaj parametrami operacyjnymi i integracją</p>
+      <div className="mb-10">
+        <h1 className="text-3xl font-extrabold text-brand-dark mb-1 tracking-tight">Ustawienia konta</h1>
+        <p className="text-sm font-medium text-slate-500">Zarządzaj profilem i integracjami</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12">
@@ -104,36 +104,36 @@ export const SettingsPage = () => {
           <button
             id="settings-tab-profile"
             onClick={() => setActiveTab('profile')}
-            className={`w-full flex items-center gap-4 px-6 py-4 rounded transition-all text-left group ${
+            className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl transition-all text-left text-sm font-semibold ${
               activeTab === 'profile'
-                ? 'bg-primary text-white shadow-xl shadow-emerald-500/20'
-                : 'bg-white border border-slate-200 text-slate-500 hover:border-slate-400'
+                ? 'bg-primary text-white shadow-lg shadow-emerald-500/20'
+                : 'bg-white border border-slate-100 text-slate-600 hover:border-primary/30 hover:text-primary'
             }`}
           >
-            <UserCircle className={`w-5 h-5 ${activeTab === 'profile' ? 'text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
-            <span className="text-xs font-black uppercase tracking-widest">Profil Operatora</span>
+            <UserCircle className={`w-4 h-4 ${activeTab === 'profile' ? 'text-white' : 'text-slate-400'}`} />
+            <span>Profil</span>
           </button>
           
           <button
             id="settings-tab-integrations"
             onClick={() => setActiveTab('integrations')}
-            className={`w-full flex items-center gap-4 px-6 py-4 rounded transition-all text-left group ${
+            className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl transition-all text-left text-sm font-semibold ${
               activeTab === 'integrations'
-                ? 'bg-primary text-white shadow-xl shadow-emerald-500/20'
-                : 'bg-white border border-slate-200 text-slate-500 hover:border-slate-400'
+                ? 'bg-primary text-white shadow-lg shadow-emerald-500/20'
+                : 'bg-white border border-slate-100 text-slate-600 hover:border-primary/30 hover:text-primary'
             }`}
           >
-            <Globe className={`w-5 h-5 ${activeTab === 'integrations' ? 'text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
-            <span className="text-xs font-black uppercase tracking-widest">Integracje</span>
+            <Globe className={`w-4 h-4 ${activeTab === 'integrations' ? 'text-white' : 'text-slate-400'}`} />
+            <span>Integracje</span>
           </button>
         </div>
 
         {/* Content area */}
         <div className="flex-1">
           {activeTab === 'profile' && (
-            <Card className="border-none shadow-2xl overflow-hidden">
-              <div className="bg-brand-dark px-10 py-5">
-                <h2 className="text-xs font-black text-white uppercase tracking-[0.3em]">Hardware ID / Dane Operatora</h2>
+            <Card className="overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-100 px-8 py-5">
+                <h2 className="text-sm font-bold text-slate-700 tracking-tight">Twój profil</h2>
               </div>
               <CardContent className="p-10">
                 <div className="mb-12 flex flex-col items-center">
@@ -172,7 +172,7 @@ export const SettingsPage = () => {
                       />
                     </label>
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-6">Zaktualizuj profil wizualny</p>
+                  <p className="text-sm font-medium text-slate-500 mt-5">Zaktualizuj zdjęcie profilowe</p>
                 </div>
 
                 <form onSubmit={handleProfileSubmit(onProfileSubmit)} className="space-y-8">
@@ -196,14 +196,14 @@ export const SettingsPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <Input
                       id="settings-city"
-                      label="System miasto"
+                      label="Miasto"
                       placeholder="Warszawa"
                       error={profileErrors.city?.message}
                       {...registerProfile('city')}
                     />
                     <Input
                       id="settings-postcode"
-                      label="Kryptonim pocztowy"
+                      label="Kod pocztowy"
                       placeholder="00-001"
                       error={profileErrors.postcode?.message}
                       {...registerProfile('postcode')}
@@ -212,7 +212,7 @@ export const SettingsPage = () => {
 
                   <Input
                     id="settings-province"
-                    label="Region operacyjny"
+                    label="Województwo"
                     placeholder="Mazowieckie"
                     error={profileErrors.province?.message}
                     {...registerProfile('province')}
@@ -221,17 +221,18 @@ export const SettingsPage = () => {
                   <div className="bg-slate-50 p-6 rounded border-l-4 border-slate-200">
                     <Input
                       label="Stały Adres Email"
+                      label="Adres Email"
                       type="email"
                       value={user?.email || ''}
                       disabled
                       className="bg-transparent border-none p-0 shadow-none text-slate-500 font-bold"
                     />
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-2 italic">Nie można modyfikować nadrzędnego identyfikatora systemowego</p>
+                    <p className="text-xs font-medium text-slate-400 mt-2">Adres e-mail nie może być zmieniony.</p>
                   </div>
 
                   <div className="pt-8 border-t border-slate-100">
                     <Button id="settings-profile-submit" type="submit" size="lg" disabled={loading} className="w-full md:w-auto shadow-xl shadow-emerald-500/20">
-                      {loading ? 'SYNCHRONIZACJA...' : 'ZAKTUALIZUJ BAZĘ DANYCH'}
+                      {loading ? 'Zapisywanie...' : 'Zapisz'}
                     </Button>
                   </div>
                 </form>
@@ -241,9 +242,9 @@ export const SettingsPage = () => {
 
           {activeTab === 'integrations' && (
             <div className="space-y-10 animate-in slide-in-from-right-4 duration-500">
-              <div className="mb-0 flex items-center gap-3 border-l-4 border-brand-dark pl-6">
-                <ShieldCheck className="w-6 h-6 text-brand-dark" />
-                <h2 className="text-xl font-black text-brand-dark uppercase tracking-tight">Protokół Bezpieczeństwa Platform</h2>
+              <div className="mb-0 flex items-center gap-3">
+                <ShieldCheck className="w-6 h-6 text-primary" />
+                <h2 className="text-xl font-bold text-brand-dark tracking-tight">Integracje i połączenia</h2>
               </div>
               <IntegrationSettings />
             </div>

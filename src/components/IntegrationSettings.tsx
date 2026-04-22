@@ -103,16 +103,14 @@ export const IntegrationSettings = () => {
                 <span className={`w-2 h-2 rounded-full ${user?.is_platform_connected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
                 {user?.is_platform_connected ? 'Połączenie Aktywne' : 'Brak Sygnału'}
               </div>
-              <h3 className="text-2xl font-black text-brand-dark uppercase tracking-tight mb-2">Most Platform</h3>
-              <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest max-w-sm">Autoryzuj bezpieczny hand-shake, aby umożliwić transfer danych operacyjnych.</p>
+              <h3 className="text-2xl font-bold text-brand-dark tracking-tight mb-2">Połączenie z Siecią</h3>
+              <p className="text-slate-500 text-sm font-medium max-w-sm leading-relaxed">Autoryzuj bezpieczne połączenie, aby umożliwić publikowanie ogłoszeń Twojego punktu w naszej sieci.</p>
             </div>
             
-            <div className="shrink-0 bg-slate-50 p-8 rounded-xl border border-slate-100 flex flex-col items-center gap-6 shadow-inner w-full md:w-auto min-w-[300px]">
-              <img 
-                src="/platform-logo.svg" 
-                alt="Platform Logo" 
-                className={`h-10 transition-all duration-700 ${user?.is_platform_connected ? 'grayscale-0 scale-110' : 'grayscale opacity-30 shadow-none'}`}
-              />
+            <div className="shrink-0 bg-slate-50 p-8 rounded-2xl border border-slate-100 flex flex-col items-center gap-6 w-full md:w-auto min-w-[280px]">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                </div>
               <Button 
                 onClick={user?.is_platform_connected ? handleRefreshStatus : handleConnect}
                 size="lg"
@@ -120,7 +118,7 @@ export const IntegrationSettings = () => {
                 disabled={loading}
                 className="w-full shadow-lg"
               >
-                {loading ? 'PRZETWARZANIE...' : user?.is_platform_connected ? 'ODŚWIEŻ POŁĄCZENIE' : 'POŁĄCZ Z ALLEGRO'}
+                {loading ? 'Przetwarzanie...' : user?.is_platform_connected ? 'Odśwież połączenie' : 'Połącz z platformą'}
               </Button>
             </div>
           </div>

@@ -72,19 +72,19 @@ export const ItemPicker = ({ onSelect, initialQuery = '' }: ItemPickerProps) => 
 
             <div className="flex-1 space-y-2">
               <div className="flex justify-between items-start gap-4">
-                <h4 className="text-sm font-black text-brand-dark uppercase tracking-tight leading-tight group-hover:text-primary transition-colors">
+                <h4 className="text-sm font-bold text-brand-dark tracking-tight leading-tight group-hover:text-primary transition-colors">
                   {product.name}
                 </h4>
                 {selectedId === product.id && <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />}
               </div>
               
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded inline-block">
+              <p className="text-[10px] font-bold text-slate-400 tracking-wide bg-slate-100 px-2 py-1 rounded inline-block">
                 {product.category?.name || 'Inne'}
               </p>
 
               <div className="flex flex-wrap gap-2 mt-2">
                 {product.parameters.slice(0, 4).map((param) => (
-                  <span key={param.id} className="text-[9px] font-black uppercase tracking-tight text-slate-500 border border-slate-200 px-2 py-0.5 rounded italic">
+                  <span key={param.id} className="text-[9px] font-bold tracking-tight text-slate-500 border border-slate-200 px-2 py-0.5 rounded ">
                     {param.name}: {param.values?.join(', ') || 'N/A'}
                   </span>
                 ))}
@@ -96,7 +96,7 @@ export const ItemPicker = ({ onSelect, initialQuery = '' }: ItemPickerProps) => 
         {!loading && query && products.length === 0 && (
           <div className="text-center py-12 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
             <Package className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-[11px]">Brak produktów w katalogu dla frazy "{query}"</p>
+            <p className="text-slate-500 font-bold tracking-wide text-[11px]">Brak produktów w katalogu dla frazy "{query}"</p>
           </div>
         )}
       </div>

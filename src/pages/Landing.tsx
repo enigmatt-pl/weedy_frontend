@@ -13,10 +13,10 @@ export const Landing = () => {
           <Logo size="md" />
         </div>
         <div className="flex items-center gap-6">
-          <Button onClick={() => navigate('/login')} variant="ghost" className="text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
+          <Button onClick={() => navigate('/login')} variant="ghost" className="text-[9px] font-bold tracking-wide text-slate-500 hover:text-primary transition-colors">
             [ Logowanie ]
           </Button>
-          <Button onClick={() => navigate('/register')} className="bg-primary text-white text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded">
+          <Button onClick={() => navigate('/register')} className="bg-primary text-white text-[9px] font-bold tracking-wide px-4 py-2 rounded">
             Dołącz do Sieci
           </Button>
         </div>
@@ -26,13 +26,13 @@ export const Landing = () => {
         <section className="relative overflow-hidden bg-brand-dark py-24 px-10 border-b-8 border-primary">
           <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#10b981 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
           <div className="max-w-6xl mx-auto relative z-10 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-widest mb-8">
               <Zap className="w-3 h-3 fill-primary" />
               WEEDY ANALYTICS v1.0 — LIVE DATA
             </div>
-            <h1 className="text-6xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-none uppercase">
+            <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 tracking-tight leading-none uppercase">
               Największa Baza <br />
-              <span className="text-primary italic">Dispensaries w Polsce</span>
+              <span className="text-primary ">Dispensaries w Polsce</span>
             </h1>
             <p className="text-xl text-emerald-100/60 mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
               Odkryj lokalne punkty, sprawdź dostępność i opinie. 
@@ -43,7 +43,7 @@ export const Landing = () => {
               <Button
                 size="lg"
                 onClick={() => navigate('/home')}
-                className="px-10 py-5 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] rounded shadow-2xl shadow-emerald-500/40 hover:scale-105 transition-all"
+                className="px-10 py-5 bg-primary text-white text-[11px] font-bold tracking-wider rounded shadow-2xl shadow-emerald-500/40 hover:scale-105 transition-all"
               >
                 URUCHOM WYSZUKIWARKĘ
               </Button>
@@ -51,7 +51,7 @@ export const Landing = () => {
                 size="lg"
                 variant="ghost"
                 onClick={() => navigate('/register')}
-                className="px-10 py-5 border border-white/20 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded hover:bg-white/5 transition-all"
+                className="px-10 py-5 border border-white/20 text-white text-[11px] font-bold tracking-wider rounded hover:bg-white/5 transition-all"
               >
                 DODAJ SWÓJ PUNKT
               </Button>
@@ -64,7 +64,7 @@ export const Landing = () => {
             <div className="w-14 h-14 bg-brand-dark rounded flex items-center justify-center mb-8 shadow-xl">
               <Zap className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-black text-brand-dark mb-4 uppercase tracking-tighter">Inteligentna Mapa</h3>
+            <h3 className="text-xl font-bold text-brand-dark mb-4 tracking-tight">Inteligentna Mapa</h3>
             <p className="text-slate-500 text-sm leading-relaxed font-medium">
               Geolokalizacja w czasie rzeczywistym pozwala znaleźć najbliższe otwarte punkty 
               z uwzględnieniem aktualnych godzin pracy i dostępności towaru.
@@ -75,7 +75,7 @@ export const Landing = () => {
             <div className="w-14 h-14 bg-brand-dark rounded flex items-center justify-center mb-8 shadow-xl">
               <TrendingUp className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-black text-brand-dark mb-4 uppercase tracking-tighter">Analityka Rynku</h3>
+            <h3 className="text-xl font-bold text-brand-dark mb-4 tracking-tight">Analityka Rynku</h3>
             <p className="text-slate-500 text-sm leading-relaxed font-medium">
               Monitorujemy trendy rynkowe i ceny, dostarczając użytkownikom oraz właścicielom 
               punktów bezcenne dane statystyczne.
@@ -86,7 +86,7 @@ export const Landing = () => {
             <div className="w-14 h-14 bg-brand-dark rounded flex items-center justify-center mb-8 shadow-xl">
               <Clock className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-black text-brand-dark mb-4 uppercase tracking-tighter">Społeczność i Opinie</h3>
+            <h3 className="text-xl font-bold text-brand-dark mb-4 tracking-tight">Społeczność i Opinie</h3>
             <p className="text-slate-500 text-sm leading-relaxed font-medium">
               Zintegrowany system weryfikowanych opinii pomaga wybrać najlepsze miejsca 
               bazując na doświadczeniach innych pacjentów i klientów.
