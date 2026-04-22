@@ -27,6 +27,8 @@ export interface Dispensary {
   images?: string[];
   created_at: string;
   location?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export const AuthApi = {
