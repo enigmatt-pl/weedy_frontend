@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Leaf, Sparkles, ChevronRight, Store, Package, Zap } from 'lucide-react';
 import { useState } from 'react';
+import { SearchApi } from '../../lib/api';
 
 export const Hero = ({ user }: { user: { first_name?: string } | null }) => {
   const navigate = useNavigate();
@@ -13,9 +14,24 @@ export const Hero = ({ user }: { user: { first_name?: string } | null }) => {
     { id: 'accessories', label: 'Akcesoria', icon: Package },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/search?q=${query}`);
+    try {
+      const response = await SearchApi.create({ q: query });
+      navigate(`/searches/${response.search_id}`);
+    } catch (error) {
+      console.error('Search record creation failed:', error);
+    }
+  };
+
+  const handleCategorySearch = async (categoryId: string) => {
+    try {
+      const { search_id } = await SearchApi.create({ category: categoryId });
+      navigate(`/searches/${search_id}`);
+    } catch (error) {
+      console.error('Category search failed:', error);
+      navigate(`/search?category=${categoryId}`);
+    }
   };
 
   return (
@@ -72,7 +88,7 @@ export const Hero = ({ user }: { user: { first_name?: string } | null }) => {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => navigate(`/search?category=${cat.id}`)}
+              onClick={() => handleCategorySearch(cat.id)}
               className="group flex items-center gap-3 px-6 py-3.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-slate-300 hover:bg-white hover:text-slate-900 hover:border-white hover:-translate-y-1 transition-all duration-300"
             >
               <cat.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
