@@ -30,7 +30,7 @@ apiClient.interceptors.response.use(
 );
 
 export interface Dispensary {
-  id: number;
+  id: string;
   title: string;
   description: string;
   estimated_price: number;
@@ -48,7 +48,7 @@ export interface Dispensary {
   city?: string;
   website?: string;
   email?: string;
-  user_id?: number;
+  user_id?: string;
   query_data?: string;
 }
 
@@ -126,7 +126,7 @@ export const AdminApi = {
   updateCredits: (id: string | number, credits: number) =>
     apiClient.patch(`/admin/users/${id}/credits`, { credits }),
   deleteUser: (id: string | number) => apiClient.delete(`/admin/users/${id}/hard_delete`),
-  getPageViews: (page = 1, perPage = 50, search = '', language = '', country = '') => 
+  getPageViews: (page = 1, perPage = 50, search = '', language = '', country = '') =>
     apiClient.get(`/admin/analytics/page_views?page=${page}&per_page=${perPage}&search=${search}&language=${language}&country=${country}`),
   getAnalyticsSummary: () =>
     apiClient.get('/admin/analytics/summary'),
@@ -150,6 +150,44 @@ export const PlatformApi = {
   searchProducts: async (query: string): Promise<{ products: any[] }> => {
     const { data } = await apiClient.get('/platform/search', {
       params: { query }
+    });
+    return data;
+  }
+};
+
+export interface SearchParams {
+  q?: string;
+  city?: string;
+  category?: string;
+  order?: string;
+  page?: number;
+  per_page?: number;
+}
+
+export interface SearchResponse {
+  search_id: string;
+  query: string;
+  city: string | null;
+  category: string | null;
+  order: string;
+  results: Dispensary[];
+  meta: {
+    current_page: number;
+    next_page: number | null;
+    prev_page: number | null;
+    total_pages: number;
+    total_count: number;
+  };
+}
+
+export const SearchApi = {
+  create: async (params: SearchParams): Promise<SearchResponse> => {
+    const { data } = await apiClient.post<SearchResponse>('/searches', params);
+    return data;
+  },
+  get: async (id: string, page = 1): Promise<SearchResponse> => {
+    const { data } = await apiClient.get<SearchResponse>(`/searches/${id}`, {
+      params: { page }
     });
     return data;
   }
