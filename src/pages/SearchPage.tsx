@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, MapPin, Clock, Star, Package, Loader2, SlidersHorizontal, X, Leaf, LayoutGrid, Map as MapIcon } from 'lucide-react';
+import { Search, MapPin, Clock, Star, Package, Loader2, SlidersHorizontal, X, Leaf, LayoutGrid, Map as MapIcon, Edit2, Trash2 } from 'lucide-react';
 import { DispensariesApi, Dispensary } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 import { Map } from '../components/Map';
 
 const POLISH_CITIES = ['Warszawa', 'Kraków', 'Wrocław', 'Gdańsk', 'Poznań', 'Łódź', 'Katowice', 'Lublin', 'Białystok', 'Rzeszów', 'Szczecin', 'Bydgoszcz'];
@@ -29,6 +30,7 @@ const stripMarkdown = (text: string | null | undefined): string => {
 
 export const SearchPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const initialCategory = searchParams.get('category') || 'all';
@@ -45,29 +47,33 @@ export const SearchPage = () => {
   const [showFilters, setShowFilters] = useState(initialCategory !== 'all' || initialQuery !== '');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>(initialView);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [focusedId, setFocusedId] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const fetchDispensaries = async () => {
-      setLoading(true);
-      try {
-        const data = await DispensariesApi.getAll(page, 12);
-        const visible = data.dispensaries.filter(d => ['published', 'active', 'draft'].includes(d.status));
-        setDispensaries(visible);
-        setTotalPages(data.meta.total_pages);
-        setTotalCount(data.meta.total_count);
-      } catch {
-        setDispensaries([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDispensaries();
-  }, [page]);
+    const timer = setTimeout(() => {
+      const fetchDispensaries = async () => {
+        setLoading(true);
+        try {
+          // Use ?all=true for global search if no query, or ?q=... for filtered results
+          const data = await DispensariesApi.getAll(page, 12, undefined, !query, query || undefined);
+          setDispensaries(data.dispensaries);
+          setTotalPages(data.meta.total_pages);
+          setTotalCount(data.meta.total_count);
+        } catch {
+          setDispensaries([]);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchDispensaries();
+    }, 500); // 500ms debounce
+    return () => clearTimeout(timer);
+  }, [page, query]);
 
   const filtered = dispensaries.filter(d => {
-    const haystack = `${d.title} ${d.description} ${d.query_data} ${d.city} ${d.category}`.toLowerCase();
+    const haystack = `${d.title} ${d.description} ${d.query_data} ${d.city} ${d.categories?.join(' ')}`.toLowerCase();
     const qMatch = !query || haystack.includes(query.toLowerCase());
     const cityMatch = !selectedCity || d.city?.toLowerCase() === selectedCity.toLowerCase() || d.query_data?.toLowerCase().includes(selectedCity.toLowerCase());
     const categoryMatch = selectedCategory === 'all' || d.categories?.some(cat => cat.toLowerCase() === selectedCategory.toLowerCase());
@@ -179,7 +185,7 @@ export const SearchPage = () => {
           </div>
           {(query || selectedCity) && (
             <button
-              onClick={() => { setQuery(''); setSelectedCity(''); }}
+              onClick={() => { setQuery(''); setSelectedCity(''); setFocusedId(null); setSelectedId(null); }}
               className="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1"
             >
               <X className="w-3 h-3" /> Wyczyść filtry
@@ -210,7 +216,7 @@ export const SearchPage = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => { setQuery(''); setSelectedCity(''); setSelectedCategory('all'); }}
+                  onClick={() => { setQuery(''); setSelectedCity(''); setSelectedCategory('all'); setFocusedId(null); setSelectedId(null); }}
                   className="px-6 py-3 bg-primary text-white font-semibold rounded-2xl hover:bg-emerald-600 transition-all"
                 >
                   Pokaż wszystkie punkty
@@ -229,9 +235,19 @@ export const SearchPage = () => {
                       id={`dispensary-${dispensary.id}`}
                       onMouseEnter={() => setHoveredId(dispensary.id)}
                       onMouseLeave={() => setHoveredId(null)}
-                      onClick={() => setSelectedId(dispensary.id)}
+                      onClick={() => {
+                        setFocusedId(dispensary.id);
+                        if (viewMode === 'map') {
+                          // Already showing map, just let it focus
+                        } else if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                          // On mobile, maybe switch to map? 
+                          // Or just open drawer directly for mobile?
+                          // Let's stick to user request: focus map.
+                          setViewMode('map');
+                        }
+                      }}
                       className={`bg-white rounded-3xl border shadow-lg shadow-slate-200/50 overflow-hidden group cursor-pointer transition-all duration-500
-                        ${isSelected ? 'border-primary ring-4 ring-primary/10' : 'border-slate-100'}
+                        ${(selectedId === dispensary.id || focusedId === dispensary.id) ? 'border-primary ring-4 ring-primary/10' : 'border-slate-100'}
                         ${viewMode === 'grid' ? 'hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-1' : 'flex items-center p-4 gap-4 hover:bg-emerald-50/50'}
                       `}
                     >
@@ -303,11 +319,10 @@ export const SearchPage = () => {
               <Map 
                 dispensaries={filtered} 
                 onSelect={(id) => {
+                  setFocusedId(id);
                   setSelectedId(id);
-                  const el = document.getElementById(`dispensary-${id}`);
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }}
-                selectedId={selectedId}
+                focusedId={focusedId}
               />
             </div>
           )}
@@ -344,6 +359,127 @@ export const SearchPage = () => {
           </div>
         )}
       </div>
+      {/* Quick Detail Drawer */}
+      {selectedId && (
+        <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setSelectedId(null)} />
+          <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-500">
+            {/* Drawer Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                  <Leaf className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-brand-dark leading-tight">Szczegóły Punktu</h2>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Informacje zweryfikowane</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedId(null)}
+                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                <X className="w-6 h-6 text-slate-400" />
+              </button>
+            </div>
+
+            {/* Drawer Content */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+              {(() => {
+                const d = dispensaries.find(item => item.id === selectedId);
+                if (!d) return null;
+                const images = d.image_urls || d.images || [];
+
+                return (
+                  <div className="space-y-10">
+                    {/* Image Gallery */}
+                    {images.length > 0 && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {images.slice(0, 4).map((url, i) => (
+                          <div key={i} className={`rounded-3xl overflow-hidden border border-slate-100 shadow-sm ${i === 0 ? 'col-span-2 aspect-video' : 'aspect-square'}`}>
+                            <img src={url} className="w-full h-full object-cover" alt="" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="space-y-6">
+                      <h1 className="text-3xl font-black text-brand-dark tracking-tight leading-none">{d.title}</h1>
+                      <div className="flex flex-wrap gap-2">
+                        {d.categories?.map(cat => (
+                          <span key={cat} className="px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-lg">
+                            {cat}
+                          </span>
+                        ))}
+                        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-amber-500 stroke-amber-500" /> {d.rating || '4.8'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+                      <h3 className="text-xs font-black text-brand-dark uppercase tracking-widest flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-primary" /> Lokalizacja
+                      </h3>
+                      <p className="text-sm font-bold text-slate-600 leading-relaxed">
+                        {d.city}, {d.query_data?.replace(/\n/g, ', ')}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-2">
+                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Telefon</h3>
+                        <p className="text-sm font-bold text-brand-dark">{d.phone || 'Nie podano'}</p>
+                      </div>
+                      <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-2">
+                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Godziny</h3>
+                        <p className="text-sm font-bold text-brand-dark">{d.hours || '09:00 - 21:00'}</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="text-xs font-black text-brand-dark uppercase tracking-widest flex items-center gap-2">
+                        <Star className="w-4 h-4 text-primary" /> O firmie
+                      </h3>
+                      <p className="text-sm font-medium text-slate-500 leading-relaxed">
+                        {stripMarkdown(d.description)}
+                      </p>
+                    </div>
+
+                    {d.website && (
+                      <a 
+                        href={d.website.startsWith('http') ? d.website : `https://${d.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-5 bg-brand-dark text-white rounded-2xl font-black uppercase tracking-widest text-center block hover:bg-black transition-colors shadow-2xl shadow-black/20"
+                      >
+                        Odwiedź stronę WWW
+                      </a>
+                    )}
+
+                    {user && user.id === d.user_id && (
+                      <div className="grid grid-cols-2 gap-4 pt-8 border-t border-slate-100">
+                        <button 
+                          onClick={() => navigate('/dashboard/history')}
+                          className="py-4 bg-emerald-100 text-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-200 transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Edit2 className="w-3 h-3" /> Edytuj Punkt
+                        </button>
+                        <button 
+                          onClick={() => navigate('/dashboard/history')}
+                          className="py-4 bg-red-50 text-red-600 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Trash2 className="w-3 h-3" /> Usuń
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

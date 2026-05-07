@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Dispensary } from '../lib/api';
@@ -30,7 +30,7 @@ const emeraldIcon = new L.DivIcon({
 interface MapProps {
   dispensaries: Dispensary[];
   onSelect?: (id: number) => void;
-  selectedId?: number | null;
+  focusedId?: number | null;
 }
 
 const ChangeView = ({ center, zoom }: { center: [number, number], zoom: number }) => {
@@ -57,7 +57,27 @@ const FitBounds = ({ dispensaries }: { dispensaries: Dispensary[] }) => {
   return null;
 };
 
-export const Map = ({ dispensaries, onSelect, selectedId }: MapProps) => {
+const AutoSelect = ({ id, dispensaries, markersRef }: { id?: number | null, dispensaries: Dispensary[], markersRef: React.MutableRefObject<{[key: number]: L.Marker | null}> }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!id) return;
+    const d = dispensaries.find(item => item.id === id);
+    if (d && d.latitude && d.longitude) {
+      map.setView([d.latitude, d.longitude], 16);
+      
+      const marker = markersRef.current[id];
+      if (marker) {
+        marker.openPopup();
+      }
+    }
+  }, [id, dispensaries, map, markersRef]);
+  
+  return null;
+};
+
+export const Map = ({ dispensaries, onSelect, focusedId }: MapProps) => {
+  const markersRef = useRef<{[key: number]: L.Marker | null}>({});
   // Mock coordinates for demo if not provided
   const processedDispensaries = useMemo(() => {
     return dispensaries
@@ -90,6 +110,7 @@ export const Map = ({ dispensaries, onSelect, selectedId }: MapProps) => {
         {processedDispensaries.map((dispensary) => (
           <Marker 
             key={dispensary.id} 
+            ref={(el) => (markersRef.current[dispensary.id] = el)}
             position={[dispensary.latitude!, dispensary.longitude!]}
             icon={emeraldIcon}
             eventHandlers={{
@@ -137,6 +158,7 @@ export const Map = ({ dispensaries, onSelect, selectedId }: MapProps) => {
         ))}
 
         <FitBounds dispensaries={processedDispensaries} />
+        <AutoSelect id={focusedId} dispensaries={processedDispensaries} markersRef={markersRef} />
       </MapContainer>
 
       {/* Map Overlay Stats */}

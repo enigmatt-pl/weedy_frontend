@@ -17,6 +17,18 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Don't globally redirect to /login.
+      // Let the caller handle it or let ProtectedRoute handle it for routes.
+      console.warn('Unauthorized request, but skipping global redirect.');
+    }
+    return Promise.reject(error);
+  }
+);
+
 export interface Dispensary {
   id: number;
   title: string;
@@ -36,6 +48,8 @@ export interface Dispensary {
   city?: string;
   website?: string;
   email?: string;
+  user_id?: number;
+  query_data?: string;
 }
 
 export const AuthApi = {
@@ -69,9 +83,9 @@ export interface PaginatedResponse<T> {
 }
 
 export const DispensariesApi = {
-  getAll: async (page = 1, perPage = 10, userId?: string | number): Promise<PaginatedResponse<Dispensary>> => {
+  getAll: async (page = 1, perPage = 10, userId?: string | number, all?: boolean, q?: string): Promise<PaginatedResponse<Dispensary>> => {
     const { data } = await apiClient.get<PaginatedResponse<Dispensary>>('/dispensaries', {
-      params: { page, per_page: perPage, user_id: userId }
+      params: { page, per_page: perPage, user_id: userId, all, q }
     });
     return data;
   },
