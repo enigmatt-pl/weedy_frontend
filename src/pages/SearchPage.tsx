@@ -37,13 +37,14 @@ export const SearchPage = () => {
   const initialCity = searchParams.get('city') || '';
   const initialCategory = searchParams.get('category') || 'all';
   const initialView = searchParams.get('view') === 'map' ? 'map' : 'grid';
+  const initialPage = parseInt(searchParams.get('page') || '1', 10);
 
   const [query, setQuery] = useState(initialQuery);
   const [selectedCity, setSelectedCity] = useState(initialCity);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [dispensaries, setDispensaries] = useState<Dispensary[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showFilters, setShowFilters] = useState(initialCategory !== 'all' || initialQuery !== '' || initialCity !== '');
@@ -85,7 +86,8 @@ export const SearchPage = () => {
 
           // If URL had filter params, promote to a persisted URL so it's bookmarkable
           if (initialQuery || initialCity || initialCategory !== 'all') {
-            navigate(`/searches/${data.search_id}`, { replace: true });
+            const pageParam = page > 1 ? `&page=${page}` : '';
+            navigate(`/searches/${data.search_id}?${pageParam}`, { replace: true });
           }
         }
       } catch (err) {
@@ -395,7 +397,11 @@ export const SearchPage = () => {
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-center gap-3 mt-16">
             <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
+              onClick={() => {
+                const newPage = Math.max(1, page - 1);
+                setPage(newPage);
+                if (searchId) navigate(`/searches/${searchId}?page=${newPage}`, { replace: true });
+              }}
               disabled={page === 1}
               className="px-6 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
@@ -408,7 +414,10 @@ export const SearchPage = () => {
                   <div key={p} className="flex items-center gap-2">
                     {i > 0 && p - arr[i-1] > 1 && <span className="text-slate-300">...</span>}
                     <button
-                      onClick={() => setPage(p)}
+                      onClick={() => {
+                        setPage(p);
+                        if (searchId) navigate(`/searches/${searchId}?page=${p}`, { replace: true });
+                      }}
                       className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${p === page ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'text-slate-600 hover:bg-slate-100'}`}
                     >
                       {p}
@@ -417,7 +426,11 @@ export const SearchPage = () => {
                 ))}
             </div>
             <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => {
+                const newPage = Math.min(totalPages, page + 1);
+                setPage(newPage);
+                if (searchId) navigate(`/searches/${searchId}?page=${newPage}`, { replace: true });
+              }}
               disabled={page === totalPages}
               className="px-6 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600 hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >

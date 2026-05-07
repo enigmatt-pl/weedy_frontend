@@ -50,7 +50,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/search" element={<SearchPage />} />
+<Route path="/searches/:searchId" element={<SearchPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/auth" element={<Navigate to="/login" replace />} />
