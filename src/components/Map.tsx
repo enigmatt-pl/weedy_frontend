@@ -29,8 +29,9 @@ const emeraldIcon = new L.DivIcon({
 
 interface MapProps {
   dispensaries: Dispensary[];
-  onSelect?: (id: number) => void;
-  focusedId?: number | null;
+  onSelect?: (id: string) => void;
+  focusedId?: string | null;
+  hoveredId?: string | null;
 }
 
 const ChangeView = ({ center, zoom }: { center: [number, number], zoom: number }) => {
@@ -57,7 +58,7 @@ const FitBounds = ({ dispensaries }: { dispensaries: Dispensary[] }) => {
   return null;
 };
 
-const AutoSelect = ({ id, dispensaries, markersRef }: { id?: number | null, dispensaries: Dispensary[], markersRef: React.MutableRefObject<{[key: number]: L.Marker | null}> }) => {
+const AutoSelect = ({ id, dispensaries, markersRef }: { id?: string | null, dispensaries: Dispensary[], markersRef: React.MutableRefObject<{[key: string]: L.Marker | null}> }) => {
   const map = useMap();
   
   useEffect(() => {
@@ -76,17 +77,19 @@ const AutoSelect = ({ id, dispensaries, markersRef }: { id?: number | null, disp
   return null;
 };
 
-export const Map = ({ dispensaries, onSelect, focusedId }: MapProps) => {
-  const markersRef = useRef<{[key: number]: L.Marker | null}>({});
+export const Map = ({ dispensaries, onSelect, focusedId, hoveredId }: MapProps) => {
+  const markersRef = useRef<{[key: string]: L.Marker | null}>({});
   // Mock coordinates for demo if not provided
   const processedDispensaries = useMemo(() => {
     return dispensaries
       .map(d => {
-        const id = Number(d.id) || 0;
         const rawLat = parseFloat(String(d.latitude));
         const rawLng = parseFloat(String(d.longitude));
-        const lat = !isNaN(rawLat) ? rawLat : (52.237 + (Math.sin(id) * 2));
-        const lng = !isNaN(rawLng) ? rawLng : (21.017 + (Math.cos(id) * 4));
+        
+        // Deterministic fallback based on ID string
+        const seed = d.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const lat = !isNaN(rawLat) ? rawLat : (52.237 + (Math.sin(seed) * 2));
+        const lng = !isNaN(rawLng) ? rawLng : (21.017 + (Math.cos(seed) * 4));
         return { ...d, latitude: lat, longitude: lng };
       })
       .filter(d => !isNaN(d.latitude) && !isNaN(d.longitude));
@@ -112,7 +115,14 @@ export const Map = ({ dispensaries, onSelect, focusedId }: MapProps) => {
             key={dispensary.id} 
             ref={(el) => (markersRef.current[dispensary.id] = el)}
             position={[dispensary.latitude!, dispensary.longitude!]}
-            icon={emeraldIcon}
+            icon={L.divIcon({
+              className: 'custom-div-icon',
+              html: `<div class="w-10 h-10 ${hoveredId === dispensary.id || focusedId === dispensary.id ? 'bg-amber-500 scale-125 z-[100]' : 'bg-primary'} rounded-full flex items-center justify-center border-4 border-white shadow-xl transition-all duration-300 transform -translate-y-1/2 -translate-x-1/2">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                     </div>`,
+              iconSize: [40, 40],
+              iconAnchor: [20, 20],
+            })}
             eventHandlers={{
               click: () => onSelect?.(dispensary.id),
             }}

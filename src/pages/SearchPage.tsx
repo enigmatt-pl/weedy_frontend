@@ -77,6 +77,9 @@ export const SearchPage = () => {
 
           const data = await SearchApi.create(params);
           setDispensaries(data.results);
+          setQuery(data.query || '');
+          setSelectedCity(data.city || '');
+          setSelectedCategory(data.category || 'all');
           setTotalPages(data.meta.total_pages);
           setTotalCount(data.meta.total_count);
 
@@ -99,6 +102,7 @@ export const SearchPage = () => {
 
   const handleFilterChange = async (newParams: Partial<SearchParams>) => {
     try {
+      setPage(1); // Always reset to first page on filter change
       const combinedParams: SearchParams = {
         q: query || undefined,
         city: selectedCity || undefined,
@@ -381,6 +385,7 @@ export const SearchPage = () => {
                   setSelectedId(id);
                 }}
                 focusedId={focusedId}
+                hoveredId={hoveredId}
               />
             </div>
           )}
@@ -397,15 +402,19 @@ export const SearchPage = () => {
               ← Poprzednia
             </button>
             <div className="flex items-center gap-2">
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(p => (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${p === page ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'text-slate-600 hover:bg-slate-100'}`}
-                >
-                  {p}
-                </button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .map((p, i, arr) => (
+                  <div key={p} className="flex items-center gap-2">
+                    {i > 0 && p - arr[i-1] > 1 && <span className="text-slate-300">...</span>}
+                    <button
+                      onClick={() => setPage(p)}
+                      className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${p === page ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'text-slate-600 hover:bg-slate-100'}`}
+                    >
+                      {p}
+                    </button>
+                  </div>
+                ))}
             </div>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
