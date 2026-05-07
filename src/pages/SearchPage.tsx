@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { Search, MapPin, Clock, Star, Package, Loader2, SlidersHorizontal, X, Leaf, LayoutGrid, Map as MapIcon, Edit2, Trash2 } from 'lucide-react';
-import { DispensariesApi, Dispensary } from '../lib/api';
+import { Dispensary, SearchApi, SearchParams } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { Map } from '../components/Map';
 
@@ -30,55 +30,95 @@ const stripMarkdown = (text: string | null | undefined): string => {
 
 export const SearchPage = () => {
   const navigate = useNavigate();
+  const { searchId } = useParams<{ searchId: string }>();
   const { user } = useAuthStore();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
+  const initialCity = searchParams.get('city') || '';
   const initialCategory = searchParams.get('category') || 'all';
   const initialView = searchParams.get('view') === 'map' ? 'map' : 'grid';
 
   const [query, setQuery] = useState(initialQuery);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedCity, setSelectedCity] = useState(initialCity);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [dispensaries, setDispensaries] = useState<Dispensary[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [showFilters, setShowFilters] = useState(initialCategory !== 'all' || initialQuery !== '');
+  const [showFilters, setShowFilters] = useState(initialCategory !== 'all' || initialQuery !== '' || initialCity !== '');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>(initialView);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [focusedId, setFocusedId] = useState<number | null>(null);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const fetchDispensaries = async () => {
-        setLoading(true);
-        try {
-          // Use ?all=true for global search if no query, or ?q=... for filtered results
-          const data = await DispensariesApi.getAll(page, 12, undefined, !query, query || undefined);
-          setDispensaries(data.dispensaries);
+    const fetchDispensaries = async () => {
+      setLoading(true);
+      try {
+        if (searchId) {
+          // Persisted search — re-run by UUID (bookmarkable / shareable)
+          const data = await SearchApi.get(searchId, page);
+          setDispensaries(data.results);
+          setQuery(data.query || '');
+          setSelectedCity(data.city || '');
+          setSelectedCategory(data.category || 'all');
           setTotalPages(data.meta.total_pages);
           setTotalCount(data.meta.total_count);
-        } catch {
-          setDispensaries([]);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchDispensaries();
-    }, 500); // 500ms debounce
-    return () => clearTimeout(timer);
-  }, [page, query]);
+        } else {
+          // No UUID yet — build params from URL then create a persisted search record.
+          // POST /searches is the single source of truth for public results (no auth required).
+          const params: SearchParams = {};
+          if (initialQuery) params.q = initialQuery;
+          if (initialCity) params.city = initialCity;
+          if (initialCategory !== 'all') params.category = initialCategory;
 
-  const filtered = dispensaries.filter(d => {
-    const haystack = `${d.title} ${d.description} ${d.query_data} ${d.city} ${d.categories?.join(' ')}`.toLowerCase();
-    const qMatch = !query || haystack.includes(query.toLowerCase());
-    const cityMatch = !selectedCity || d.city?.toLowerCase() === selectedCity.toLowerCase() || d.query_data?.toLowerCase().includes(selectedCity.toLowerCase());
-    const categoryMatch = selectedCategory === 'all' || d.categories?.some(cat => cat.toLowerCase() === selectedCategory.toLowerCase());
-    return qMatch && cityMatch && categoryMatch;
-  });
+          const data = await SearchApi.create(params);
+          setDispensaries(data.results);
+          setTotalPages(data.meta.total_pages);
+          setTotalCount(data.meta.total_count);
+
+          // If URL had filter params, promote to a persisted URL so it's bookmarkable
+          if (initialQuery || initialCity || initialCategory !== 'all') {
+            navigate(`/searches/${data.search_id}`, { replace: true });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch dispensaries:', err);
+        setDispensaries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDispensaries();
+    // initialQuery/City/Category are stable URL-derived values; searchId and page drive re-fetches
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, searchId]);
+
+  const handleFilterChange = async (newParams: Partial<SearchParams>) => {
+    try {
+      const combinedParams: SearchParams = {
+        q: query || undefined,
+        city: selectedCity || undefined,
+        category: selectedCategory === 'all' ? undefined : selectedCategory,
+        ...newParams,
+      };
+      const { search_id } = await SearchApi.create(combinedParams);
+      navigate(`/searches/${search_id}`);
+    } catch (error) {
+      console.error('Failed to create search record:', error);
+    }
+  };
+
+  // Debounced text search — prevents double-submit on rapid Enter presses
+  const handleTextSearch = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      handleFilterChange({ q: query || undefined });
+    }, 300);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -101,10 +141,15 @@ export const SearchPage = () => {
               placeholder="Szukaj dispensary, CBD, konopi..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleTextSearch();
+                }
+              }}
               className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
             {query && (
-              <button onClick={() => setQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900">
+              <button onClick={() => { setQuery(''); handleFilterChange({ q: undefined }); }} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -145,7 +190,7 @@ export const SearchPage = () => {
               {POLISH_CITIES.map(city => (
                 <button
                   key={city}
-                  onClick={() => setSelectedCity(selectedCity === city ? '' : city)}
+                  onClick={() => handleFilterChange({ city: selectedCity === city ? undefined : city })}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${selectedCity === city ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-primary'}`}
                 >
                   {city}
@@ -158,7 +203,7 @@ export const SearchPage = () => {
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
+                  onClick={() => handleFilterChange({ category: cat.id === 'all' ? undefined : cat.id })}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${selectedCategory === cat.id ? 'bg-emerald-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-primary'}`}
                 >
                   {cat.label}
@@ -178,14 +223,20 @@ export const SearchPage = () => {
             </h1>
             {!loading && (
               <p className="text-sm text-slate-500 font-medium mt-1">
-                Znaleziono <span className="text-primary font-bold">{filtered.length}</span> punktów
-                {totalCount > filtered.length && ` (łącznie ${totalCount} w bazie)`}
+                Znaleziono <span className="text-primary font-bold">{totalCount}</span> punktów
               </p>
             )}
           </div>
-          {(query || selectedCity) && (
+          {(query || selectedCity || selectedCategory !== 'all') && (
             <button
-              onClick={() => { setQuery(''); setSelectedCity(''); setFocusedId(null); setSelectedId(null); }}
+              onClick={() => { 
+                setQuery(''); 
+                setSelectedCity(''); 
+                setSelectedCategory('all'); 
+                setFocusedId(null); 
+                setSelectedId(null); 
+                navigate('/search');
+              }}
               className="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1"
             >
               <X className="w-3 h-3" /> Wyczyść filtry
@@ -204,7 +255,7 @@ export const SearchPage = () => {
                 </div>
                 <p className="text-sm font-semibold text-slate-500">Wyszukiwanie punktów...</p>
               </div>
-            ) : filtered.length === 0 ? (
+            ) : dispensaries.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-32 gap-6 text-center">
                 <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center">
                   <MapPin className="w-12 h-12 text-slate-300" />
@@ -216,7 +267,14 @@ export const SearchPage = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => { setQuery(''); setSelectedCity(''); setSelectedCategory('all'); setFocusedId(null); setSelectedId(null); }}
+                  onClick={() => { 
+                    setQuery(''); 
+                    setSelectedCity(''); 
+                    setSelectedCategory('all'); 
+                    setFocusedId(null); 
+                    setSelectedId(null); 
+                    navigate('/search');
+                  }}
                   className="px-6 py-3 bg-primary text-white font-semibold rounded-2xl hover:bg-emerald-600 transition-all"
                 >
                   Pokaż wszystkie punkty
@@ -224,7 +282,7 @@ export const SearchPage = () => {
               </div>
             ) : (
               <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                {filtered.map((dispensary) => {
+                {dispensaries.map((dispensary) => {
                   const images = dispensary.image_urls || dispensary.images || [];
                   const isHovered = hoveredId === dispensary.id;
                   const isSelected = selectedId === dispensary.id;
@@ -317,7 +375,7 @@ export const SearchPage = () => {
               ${viewMode === 'map' ? 'block' : 'hidden lg:block'}
             `}>
               <Map 
-                dispensaries={filtered} 
+                dispensaries={dispensaries} 
                 onSelect={(id) => {
                   setFocusedId(id);
                   setSelectedId(id);
