@@ -118,15 +118,6 @@ const deviceIcon = (osName: string) => {
 };
 
 const formatPath = (path: string) => path || '/';
-const formatReferrer = (ref: string) => {
-  if (!ref) return '— (Direct)';
-  try {
-    return new URL(ref).hostname;
-  } catch {
-    return ref;
-  }
-};
-
 const formatVisitorId = (id: string) => {
   if (!id || id === 'anonymous') return 'Anon';
   return id.substring(0, 8);
@@ -244,7 +235,7 @@ export const AdminAnalyticsPage = () => {
     );
   }, [summary?.daily_activity]);
 
-  const DetailItem = ({ label, value, icon: Icon, highlight = false }: { label: string, value: any, icon?: any, highlight?: boolean }) => {
+  const DetailItem = ({ label, value, icon: Icon, highlight = false }: { label: string, value: unknown, icon?: React.ElementType, highlight?: boolean }) => {
     if (value === undefined || value === null || value === '' || value === 0) return null;
     return (
       <div className="flex border-b border-slate-50 py-3 last:border-0 hover:bg-slate-50/50 transition-colors px-1">

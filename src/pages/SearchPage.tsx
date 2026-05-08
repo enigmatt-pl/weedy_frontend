@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
-import { Search, MapPin, Clock, Star, Package, Loader2, SlidersHorizontal, X, Leaf, LayoutGrid, Map as MapIcon, Edit2, Trash2 } from 'lucide-react';
+import { Search, MapPin, Star, Loader2, SlidersHorizontal, X, Leaf, LayoutGrid, Map as MapIcon, Edit2, Trash2 } from 'lucide-react';
 import { Dispensary, SearchApi, SearchParams } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { Map } from '../components/Map';
+import { JsonLd } from '../components/seo/JsonLd';
+import { DispensaryListItem } from '../components/DispensaryListItem';
+import { SeoHead } from '../components/seo/SeoHead';
 
 const POLISH_CITIES = ['Warszawa', 'Kraków', 'Wrocław', 'Gdańsk', 'Poznań', 'Łódź', 'Katowice', 'Lublin', 'Białystok', 'Rzeszów', 'Szczecin', 'Bydgoszcz'];
 
@@ -126,8 +129,58 @@ export const SearchPage = () => {
     }, 300);
   };
 
+  const generateJsonLd = () => {
+    if (dispensaries.length === 0) return null;
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "numberOfItems": dispensaries.length,
+      "itemListElement": dispensaries.map((d, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "item": {
+          "@type": "LocalBusiness",
+          "name": d.title,
+          "description": stripMarkdown(d.description).substring(0, 160),
+          "image": d.image_urls?.[0] || d.images?.[0],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": d.city || "",
+            "streetAddress": d.location || "",
+          },
+          "geo": d.latitude && d.longitude ? {
+            "@type": "GeoCoordinates",
+            "latitude": d.latitude,
+            "longitude": d.longitude
+          } : undefined,
+          "telephone": d.phone,
+          "url": `${window.location.origin}/search?q=${encodeURIComponent(d.title)}`
+        }
+      }))
+    };
+  };
+
+  const jsonLdData = generateJsonLd();
+
+  const getPageTitle = () => {
+    let title = 'Szukaj Dispensary';
+    if (query) title = `${query} - Wyniki wyszukiwania`;
+    if (selectedCity) title += ` w ${selectedCity}`;
+    return `${title} | Weedy`;
+  };
+
+  const getPageDescription = () => {
+    if (query || selectedCity) {
+      return `Wyniki wyszukiwania dla ${query || 'wszystkich punktów'}${selectedCity ? ` w miejscowości ${selectedCity}` : ''}. Znajdź najlepsze produkty konopne w Twojej okolicy.`;
+    }
+    return 'Przeglądaj mapę i listę wszystkich dostępnych punktów CBD i dispensaries w Polsce.';
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
+      <SeoHead title={getPageTitle()} description={getPageDescription()} />
+      {jsonLdData && <JsonLd data={jsonLdData} />}
       {/* Search Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 flex items-center gap-4">
@@ -288,89 +341,19 @@ export const SearchPage = () => {
               </div>
             ) : (
               <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                {dispensaries.map((dispensary) => {
-                  const images = dispensary.image_urls || dispensary.images || [];
-                  const isHovered = hoveredId === dispensary.id;
-                  const isSelected = selectedId === dispensary.id;
-                  
-                  return (
-                    <div
-                      key={dispensary.id}
-                      id={`dispensary-${dispensary.id}`}
-                      onMouseEnter={() => setHoveredId(dispensary.id)}
-                      onMouseLeave={() => setHoveredId(null)}
-                      onClick={() => {
-                        setFocusedId(dispensary.id);
-                        if (viewMode === 'map') {
-                          // Already showing map, just let it focus
-                        } else if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-                          // On mobile, maybe switch to map? 
-                          // Or just open drawer directly for mobile?
-                          // Let's stick to user request: focus map.
-                          setViewMode('map');
-                        }
-                      }}
-                      className={`bg-white rounded-3xl border shadow-lg shadow-slate-200/50 overflow-hidden group cursor-pointer transition-all duration-500
-                        ${(selectedId === dispensary.id || focusedId === dispensary.id) ? 'border-primary ring-4 ring-primary/10' : 'border-slate-100'}
-                        ${viewMode === 'grid' ? 'hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-1' : 'flex items-center p-4 gap-4 hover:bg-emerald-50/50'}
-                      `}
-                    >
-                      <div className={`bg-gradient-to-br from-emerald-50 to-slate-100 overflow-hidden relative shrink-0
-                        ${viewMode === 'grid' ? 'aspect-[4/3]' : 'w-24 h-24 rounded-2xl'}
-                      `}>
-                        {images.length > 0 ? (
-                          <img
-                            src={images[0]}
-                            alt={dispensary.title}
-                            className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center gap-1">
-                            <Leaf className="w-8 h-8 text-emerald-200" />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={`flex-1 ${viewMode === 'grid' ? 'p-5' : 'py-1'}`}>
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <h3 className={`font-bold text-brand-dark leading-tight group-hover:text-primary transition-colors line-clamp-1 ${viewMode === 'grid' ? 'text-base' : 'text-sm'}`}>
-                            {dispensary.title}
-                          </h3>
-                          <div className="flex items-center gap-1 shrink-0">
-                            <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                            <span className="text-[10px] font-bold text-slate-700">{dispensary.rating || 'N/A'}</span>
-                          </div>
-                        </div>
-
-                        {dispensary.query_data && (
-                          <div className="flex items-center gap-1.5 mb-2">
-                            <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                            <p className="text-[10px] font-medium text-slate-500 truncate">
-                              {dispensary.query_data.replace(/\n/g, ' ')}
-                            </p>
-                          </div>
-                        )}
-
-                        {viewMode === 'grid' && (
-                          <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 mb-4">
-                            {stripMarkdown(dispensary.description) || 'Profesjonalny punkt dystrybucji produktów konopnych.'}
-                          </p>
-                        )}
-
-                        <div className={`flex items-center justify-between pt-3 border-t border-slate-50 ${viewMode === 'grid' ? '' : 'hidden'}`}>
-                          <div className="flex items-center gap-1.5 text-slate-400">
-                            <Clock className="w-3 h-3" />
-                            <span className="text-[10px] font-medium">{dispensary.hours || 'Godziny niepodane'}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-[10px] font-bold text-primary">
-                            <Package className="w-3 h-3" />
-                            <span>CBD · Hemp</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {dispensaries.map((dispensary) => (
+                  <DispensaryListItem
+                    key={dispensary.id}
+                    dispensary={dispensary}
+                    viewMode={viewMode}
+                    hoveredId={hoveredId}
+                    setHoveredId={setHoveredId}
+                    focusedId={focusedId}
+                    setFocusedId={setFocusedId}
+                    selectedId={selectedId}
+                    setViewMode={setViewMode}
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -540,13 +523,13 @@ export const SearchPage = () => {
                     {user && user.id === d.user_id && (
                       <div className="grid grid-cols-2 gap-4 pt-8 border-t border-slate-100">
                         <button 
-                          onClick={() => navigate('/dashboard/history')}
+                          onClick={() => navigate('/dashboard/listings')}
                           className="py-4 bg-emerald-100 text-emerald-700 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-200 transition-colors flex items-center justify-center gap-2"
                         >
                           <Edit2 className="w-3 h-3" /> Edytuj Punkt
                         </button>
                         <button 
-                          onClick={() => navigate('/dashboard/history')}
+                          onClick={() => navigate('/dashboard/listings')}
                           className="py-4 bg-red-50 text-red-600 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                         >
                           <Trash2 className="w-3 h-3" /> Usuń

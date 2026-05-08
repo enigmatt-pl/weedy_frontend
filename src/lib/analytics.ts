@@ -5,7 +5,7 @@ import { apiClient } from './api';
  * @param {Object} data - The raw analytics data object to send.
  * @returns {string} - The fuzzed payload string.
  */
-function fuzzPayload(data: any): string {
+function fuzzPayload(data: unknown): string {
   // 1. Convert to JSON string
   const jsonString = JSON.stringify(data);
   
@@ -134,10 +134,9 @@ const parseUA = (ua: string): { browser: [string, string]; os: [string, string] 
 };
 
 /** Safely read navigator.connection (experimental, not available everywhere) */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getConnection = (): Partial<PageViewPayload> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  const nav = navigator as Navigator & { connection?: { type?: string; effectiveType?: string; downlink?: number; rtt?: number } };
+  const conn = nav.connection;
   if (!conn) return {};
   return {
     connection_type: conn.type ?? undefined,
@@ -415,6 +414,36 @@ export const AnalyticsService = {
       // Silently fail — analytics must never break the app
     }
   },
+
+  /**
+   * Track a generic event (e.g. click, impression).
+   */
+  trackEvent: async (category: string, action: string, label?: string, value?: number): Promise<void> => {
+    const payload = {
+      visitor_id: getVisitorId(),
+      path: window.location.pathname,
+      category,
+      action,
+      label,
+      value,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      const user = import.meta.env.VITE_ANALYTICS_USER_ID;
+      const pass = import.meta.env.VITE_ANALYTICS_SECRET_KEY;
+
+      if (!user || !pass) return;
+
+      const headers: Record<string, string> = {
+        'Authorization': `Basic ${btoa(`${user}:${pass}`)}`
+      };
+
+      await apiClient.post('health/pulse', { pd: fuzzPayload(payload) }, { headers });
+    } catch {
+      // Silently fail
+    }
+  }
 };
 
 /**

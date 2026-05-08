@@ -378,7 +378,7 @@ export const AdminUsersList = () => {
                 <Button 
                   fullWidth 
                   variant="secondary"
-                  onClick={() => navigate(`/dashboard/history?userId=${selectedUser.id}`)}
+                  onClick={() => navigate(`/dashboard/listings?userId=${selectedUser.id}`)}
                   className="bg-brand-dark text-white border-2 border-primary/20 hover:bg-slate-900 shadow-xl"
                 >
                   <Clock className="w-4 h-4 mr-2 text-primary" /> PRZEJRZYJ HISTORIĘ OFERT

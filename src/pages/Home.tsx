@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { LogOut, LayoutDashboard, Menu as MenuIcon, X, Search } from 'lucide-react';
 import { Logo } from '../components/ui/Logo';
+import { SeoHead } from '../components/seo/SeoHead';
 
 // Landing Components
 import { Hero } from '../components/landing/Hero';
@@ -26,6 +27,7 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-primary selection:text-white">
+      <SeoHead />
       {/* Navigation */}
       <nav className="flex items-center justify-between px-6 md:px-8 py-4 bg-white/95 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-2">

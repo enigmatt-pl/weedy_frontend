@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Leaf, Sparkles, ChevronRight, Store, Package, Zap } from 'lucide-react';
+import { Search, MapPin, Leaf, Sparkles, Store, Package, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { SearchApi } from '../../lib/api';
 
-export const Hero = ({ user }: { user: { first_name?: string } | null }) => {
+export const Hero = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
 

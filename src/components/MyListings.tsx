@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { DispensariesApi, Dispensary } from '../lib/api';
 import { useToastStore } from '../store/toastStore';
-import { useAuthStore } from '../store/authStore';
 import { 
   Save, Send, Package, Calendar, Loader2, Trash2, X, Search, 
-  User, Scissors, Upload, Move, MapPin, Info, Store, FileText, Navigation, EyeOff
+  Scissors, Move, MapPin, Info, Store, FileText, EyeOff
 } from 'lucide-react';
 import { LocationPicker } from './LocationPicker';
 import { useSearchParams } from 'react-router-dom';
@@ -21,7 +20,6 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -31,12 +29,11 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { ImageCropper } from './ImageCropper';
 
-type HistoryFormData = z.infer<typeof historySchema>;
+type ListingFormData = z.infer<typeof listingSchema>;
 
-const historySchema = z.object({
+const listingSchema = z.object({
   title: z.string().min(1, 'Nazwa jest wymagana'),
   description: z.string().min(1, 'Opis jest wymagany'),
   query_data: z.string().min(1, 'Lokalizacja jest wymagana'),
@@ -49,7 +46,7 @@ const historySchema = z.object({
   website: z.string().optional(),
 });
 
-const MAX_IMAGES = 16;
+// const MAX_IMAGES = 16;
 
 const SortableHistoryImage = ({ 
   img, 
@@ -133,8 +130,7 @@ const SortableHistoryImage = ({
 export const MyListings = () => {
   const [dispensaries, setDispensaries] = useState<Dispensary[]>([]);
   const [selectedDispensary, setSelectedDispensary] = useState<Dispensary | null>(null);
-  const [meta, setMeta] = useState<{ total_pages: number; current_page: number } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
@@ -158,8 +154,8 @@ export const MyListings = () => {
     setValue,
     formState: { errors },
     reset,
-  } = useForm<HistoryFormData>({
-    resolver: zodResolver(historySchema),
+  } = useForm<ListingFormData>({
+    resolver: zodResolver(listingSchema),
   });
 
   useEffect(() => {
@@ -180,22 +176,21 @@ export const MyListings = () => {
     }
   }, [selectedDispensary, reset]);
 
-  const fetchDispensaries = async () => {
+  const fetchDispensaries = useCallback(async () => {
     setLoading(true);
     try {
       const data = await DispensariesApi.getAll(currentPage, 10, userId);
       setDispensaries(data.dispensaries);
-      setMeta(data.meta);
     } catch {
       showToast('Błąd pobierania punktów', 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, userId, showToast]);
 
   useEffect(() => {
     fetchDispensaries();
-  }, [currentPage, userId]);
+  }, [currentPage, userId, fetchDispensaries]);
 
   const handlePublish = async (id: number) => {
     setSaving(true);

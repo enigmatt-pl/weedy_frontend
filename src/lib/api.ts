@@ -152,7 +152,7 @@ export const PlatformApi = {
     }
   },
 
-  searchProducts: async (query: string): Promise<{ products: any[] }> => {
+  searchProducts: async (query: string): Promise<{ products: Record<string, unknown>[] }> => {
     const { data } = await apiClient.get('/platform/search', {
       params: { query }
     });

@@ -9,7 +9,7 @@ import { ImageUpload } from './ImageUpload';
 import { DispensariesApi } from '../lib/api';
 import { useToastStore } from '../store/toastStore';
 import { useNavigate } from 'react-router-dom';
-import { Store, MapPin, FileText, CheckCircle2, Loader2, ArrowRight, Navigation, Clock } from 'lucide-react';
+import { Store, MapPin, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 import { LocationPicker } from './LocationPicker';
 
 const dispensarySchema = z.object({
@@ -81,8 +81,8 @@ export const DispensaryWizard = () => {
 
       await DispensariesApi.create(formData);
       showToast('Punkt został dodany pomyślnie!', 'success');
-      navigate('/dashboard/history');
-    } catch (error) {
+      navigate('/dashboard/listings');
+    } catch {
       showToast('Wystąpił błąd podczas dodawania punktu', 'error');
     } finally {
       setLoading(false);

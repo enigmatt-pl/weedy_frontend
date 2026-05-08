@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MyListings } from '../MyListings';
 import { DispensariesApi } from '../../lib/api';
@@ -16,9 +16,10 @@ vi.mock('../../lib/api', () => ({
 }));
 
 // Mock the toast store
+const mockShowToast = vi.fn();
 vi.mock('../../store/toastStore', () => ({
   useToastStore: () => ({
-    showToast: vi.fn(),
+    showToast: mockShowToast,
   }),
 }));
 
@@ -42,7 +43,7 @@ const mockDispensaries = [
 describe('MyListings Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (DispensariesApi.getAll as any).mockResolvedValue({
+    (DispensariesApi.getAll as Mock).mockResolvedValue({
       dispensaries: mockDispensaries,
       meta: { total_pages: 1, current_page: 1 },
     });
