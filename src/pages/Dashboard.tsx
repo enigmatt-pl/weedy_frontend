@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, NavLink, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Button } from '../components/ui/Button';
-import { Plus, History, LogOut, User, Settings as SettingsIcon, Menu, X, Users, TrendingUp } from 'lucide-react';
+import { Plus, Package, LogOut, User, Settings as SettingsIcon, Menu, X, Users, TrendingUp } from 'lucide-react';
 import { Logo } from '../components/ui/Logo';
 
 export const Dashboard = () => {
@@ -60,8 +60,8 @@ export const Dashboard = () => {
             <span>Dodaj Punkt</span>
           </NavLink>
 
-          <NavLink id="nav-history" to="/dashboard/history" className={navLinkClass} onClick={() => setIsSidebarOpen(false)}>
-            <History className="w-4 h-4" />
+          <NavLink id="nav-listings" to="/dashboard/listings" className={navLinkClass} onClick={() => setIsSidebarOpen(false)}>
+            <Package className="w-4 h-4" />
             <span>Moje Punkty</span>
           </NavLink>
 

@@ -8,7 +8,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Home } from './pages/Home';
 import { SearchPage } from './pages/SearchPage';
 import { NewDispensaryPage } from './pages/NewDispensaryPage';
-import { DispensaryHistoryPage } from './pages/DispensaryHistoryPage';
+import { MyListingsPage } from './pages/MyListingsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { PlatformCallback } from './pages/PlatformCallback';
 import { AdminUsersList } from './pages/AdminUsersList';
@@ -59,7 +59,7 @@ export const App = () => {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Navigate to="new" replace />} />
             <Route path="new" element={<NewDispensaryPage />} />
-            <Route path="history" element={<DispensaryHistoryPage />} />
+            <Route path="listings" element={<MyListingsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>

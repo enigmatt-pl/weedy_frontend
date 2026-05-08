@@ -130,7 +130,7 @@ const SortableHistoryImage = ({
   );
 };
 
-export const DispensaryHistory = () => {
+export const MyListings = () => {
   const [dispensaries, setDispensaries] = useState<Dispensary[]>([]);
   const [selectedDispensary, setSelectedDispensary] = useState<Dispensary | null>(null);
   const [meta, setMeta] = useState<{ total_pages: number; current_page: number } | null>(null);
@@ -187,7 +187,7 @@ export const DispensaryHistory = () => {
       setDispensaries(data.dispensaries);
       setMeta(data.meta);
     } catch {
-      showToast('Błąd pobierania historii', 'error');
+      showToast('Błąd pobierania punktów', 'error');
     } finally {
       setLoading(false);
     }
