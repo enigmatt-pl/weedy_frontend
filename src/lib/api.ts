@@ -105,6 +105,9 @@ export const DispensariesApi = {
 
   publish: (id: string | number) =>
     apiClient.post(`/dispensaries/${id}/publish`),
+  
+  unpublish: (id: string | number) =>
+    apiClient.post(`/dispensaries/${id}/unpublish`),
 
   destroy: (id: number) =>
     apiClient.delete(`/dispensaries/${id}`),

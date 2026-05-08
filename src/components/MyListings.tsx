@@ -6,7 +6,7 @@ import { useToastStore } from '../store/toastStore';
 import { useAuthStore } from '../store/authStore';
 import { 
   Save, Send, Package, Calendar, Loader2, Trash2, X, Search, 
-  User, Scissors, Upload, Move, MapPin, Info, Store, FileText, Navigation
+  User, Scissors, Upload, Move, MapPin, Info, Store, FileText, Navigation, EyeOff
 } from 'lucide-react';
 import { LocationPicker } from './LocationPicker';
 import { useSearchParams } from 'react-router-dom';
@@ -206,6 +206,20 @@ export const MyListings = () => {
       setSelectedDispensary(null);
     } catch {
       showToast('Błąd publikacji', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUnpublish = async (id: number) => {
+    setSaving(true);
+    try {
+      await DispensariesApi.unpublish(id);
+      showToast('Publikacja została cofnięta', 'success');
+      fetchDispensaries();
+      setSelectedDispensary(null);
+    } catch {
+      showToast('Błąd wycofywania publikacji', 'error');
     } finally {
       setSaving(false);
     }
@@ -461,7 +475,18 @@ export const MyListings = () => {
                     >
                       {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5 mr-3" /> Zapisz zmiany</>}
                     </Button>
-                    {selectedDispensary.status !== 'published' && (
+                    {selectedDispensary.status === 'published' ? (
+                      <Button
+                        fullWidth
+                        variant="ghost"
+                        size="lg"
+                        className="rounded-2xl py-8 text-slate-500 hover:text-red-500 hover:bg-red-50"
+                        onClick={() => handleUnpublish(selectedDispensary.id)}
+                        disabled={saving}
+                      >
+                        {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><EyeOff className="w-5 h-5 mr-3" /> Wycofaj z Sieci</>}
+                      </Button>
+                    ) : (
                       <Button
                         fullWidth
                         size="lg"
