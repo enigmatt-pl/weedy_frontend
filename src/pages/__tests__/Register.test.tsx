@@ -39,12 +39,12 @@ describe('Register Component', () => {
   it('renders register form', () => {
     renderRegister();
     expect(screen.getByText(/Inicjalizacja Konta/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Imię Operatora/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Nazwisko Operatora/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Imię Użytkownika/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Nazwisko Użytkownika/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Kanał Komunikacji \(Email\)/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Hasło Dostępu/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Weryfikacja Hasła/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /UTWÓRZ PROFIL OPERATORA/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /UTWÓRZ PROFIL UŻYTKOWNIKA/i })).toBeInTheDocument();
   });
 
   it('shows error if passwords do not match', async () => {
@@ -59,7 +59,7 @@ describe('Register Component', () => {
     fireEvent.click(checkboxes[0]);
     fireEvent.click(checkboxes[1]);
 
-    fireEvent.click(screen.getByRole('button', { name: /UTWÓRZ PROFIL OPERATORA/i }));
+    fireEvent.click(screen.getByRole('button', { name: /UTWÓRZ PROFIL UŻYTKOWNIKA/i }));
 
     await waitFor(() => {
       expect(screen.getByText('Hasła nie są identyczne')).toBeInTheDocument();
@@ -70,8 +70,8 @@ describe('Register Component', () => {
     signUpMock.mockResolvedValueOnce({});
     renderRegister();
 
-    fireEvent.change(screen.getByLabelText(/Imię Operatora/i), { target: { value: 'Jan' } });
-    fireEvent.change(screen.getByLabelText(/Nazwisko Operatora/i), { target: { value: 'Kowalski' } });
+    fireEvent.change(screen.getByLabelText(/Imię Użytkownika/i), { target: { value: 'Jan' } });
+    fireEvent.change(screen.getByLabelText(/Nazwisko Użytkownika/i), { target: { value: 'Kowalski' } });
     fireEvent.change(screen.getByLabelText(/Kanał Komunikacji \(Email\)/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/Hasło Dostępu/i), { target: { value: 'password123' } });
     fireEvent.change(screen.getByLabelText(/Weryfikacja Hasła/i), { target: { value: 'password123' } });
@@ -81,7 +81,7 @@ describe('Register Component', () => {
     fireEvent.click(checkboxes[0]);
     fireEvent.click(checkboxes[1]);
     
-    fireEvent.click(screen.getByRole('button', { name: /UTWÓRZ PROFIL OPERATORA/i }));
+    fireEvent.click(screen.getByRole('button', { name: /UTWÓRZ PROFIL UŻYTKOWNIKA/i }));
 
     await waitFor(() => {
       expect(signUpMock).toHaveBeenCalledWith(expect.objectContaining({
